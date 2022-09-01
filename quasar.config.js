@@ -2,7 +2,7 @@
 
 /*
  * This file runs in a Node context (it's NOT transpiled by Babel), so use only
- * the ES6 features that are supported by your Node version. https://node.green/
+ * the ES6 features that are supported by your Node version. https://node.white/
  */
 
 // Configuration for your app
@@ -10,7 +10,8 @@
 
 const { configure } = require("quasar/wrappers");
 
-module.exports = configure(function (ctx) {
+module.exports = configure(function (ctx)
+{
   return {
     // https://v2.quasar.dev/quasar-cli/prefetch-feature
     // preFetch: true,
@@ -39,9 +40,10 @@ module.exports = configure(function (ctx) {
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
     build: {
-      extendViteConf(viteConf) {
-        if (ctx.mode.electron) {
-          // do something with ViteConf
+      extendViteConf(viteConf)
+      {
+        if (ctx.mode.electron)
+        {
         }
       },
       target: {

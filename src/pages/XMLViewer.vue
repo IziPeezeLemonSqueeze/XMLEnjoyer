@@ -21,33 +21,46 @@
           dark
           class="text-white"
           size="md"
-          color="green-6"
+          color="grey-6"
           icon="fa-solid fa-file-export"
-        />
+          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
+            Esporta XML
+          </q-tooltip></q-btn
+        >
         <q-separator vertical dark spaced />
         <q-btn
           dark
           class="text-white"
           size="md"
-          color="green-6"
+          color="grey-6"
           icon="fa-solid fa-object-group"
-        />
+          @click="dialogMerge = !dialogMerge"
+          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
+            Unisci XML
+          </q-tooltip></q-btn
+        >
         <q-separator vertical dark spaced />
         <q-btn
           dark
-          color="green-6"
+          color="grey-6"
           class="text-white"
           size="md"
           icon="fa-solid fa-clone"
-        />
+          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
+            Clona XML
+          </q-tooltip></q-btn
+        >
         <q-separator vertical dark spaced />
         <q-btn
           dark
-          color="green-6"
+          color="grey-6"
           class="text-white"
           size="md"
           icon="fa-solid fa-certificate"
-        />
+          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
+            Valida XML
+          </q-tooltip></q-btn
+        >
       </div>
       <q-separator dark />
       <q-scroll-area horizontal style="height: 720px" class="full-width">
@@ -85,7 +98,10 @@
                 <q-item-section>
                   <q-bar style="border-radius: 10px 10px 0 0">
                     <div class="cursor-pointer">
-                      <q-checkbox v-model="item.checked" />
+                      <q-checkbox
+                        v-model="item.checked"
+                        @click="XMLViewerStore.GET_CHECKED_XML()"
+                      />
                     </div>
                     <div>
                       <q-popup-edit
@@ -118,13 +134,13 @@
                     inline-actions
                     class="text-white bg-red"
                   >
-                    Chiudi?
+                    Eliminare ?
                     <template v-slot:action>
                       <q-btn
                         flat
                         color="white"
                         label="Si"
-                        @click="closeList(index)"
+                        @click="XMLViewerStore.DELETE_XML(item.uuid)"
                       />
                       <q-btn
                         outline
@@ -138,7 +154,13 @@
                     v-model="item.openInfo"
                     class="text-center"
                     expand-separator
-                    style="background-color: #9dcdf4; text-align-last: center"
+                    :style="
+                      item.parsed
+                        ? item.parsed['Package']['@_xmlns'].includes('sforce')
+                          ? 'background-color: #9dcdf4; text-align-last: center'
+                          : 'background-color: #C7C7C7; text-align-last: center'
+                        : 'background-color: #C7C7C7; text-align-last: center'
+                    "
                     :icon="
                       item.parsed
                         ? item.parsed['Package']['@_xmlns'].includes('sforce')
@@ -216,9 +238,12 @@
                         <q-popup-edit
                           position="cover"
                           v-slot="scope"
-                          class="q-pa-md bg-green-8"
+                          class="q-pa-md bg-grey-5"
                         >
-                          <div class="col q-ma-sx text-center text-white">
+                          <div
+                            class="col q-ma-sx text-center text-black"
+                            style="max-height: 50px; min-height: 50px"
+                          >
                             <div class="row q-pa-sx">
                               <strong> Eliminare ? </strong><br />
                             </div>
@@ -240,7 +265,6 @@
                               />
                               <q-space />
                               <q-btn
-                                outline
                                 dense
                                 color="red"
                                 class="q-pa-sx"
@@ -257,10 +281,13 @@
                           class="list-group-item bg-gray-300 m-1 p-3 rounded-md text-left q-ma-md"
                           style="max-width: 250px; font-size: 11px"
                         >
-                          <div>
+                          <div
+                            style="min-width: max-content"
+                            v-for="(memb, membindex) in JSON.parse(el.members)"
+                          >
                             MEMBERS:
-                            <strong>{{
-                              JSON.parse(el.members)["#text"]
+                            <strong :key="membindex">{{
+                              Object.values(memb)[0]
                             }}</strong>
                           </div>
                           <div>
@@ -294,9 +321,18 @@
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
 import { VueDraggableNext } from "vue-draggable-next";
+
 export default {
   name: "XMLVIEWER",
   computed: {
+    dialogMerge: {
+      get() {
+        return this.XMLViewerStore.dialogMerge;
+      },
+      set(data) {
+        this.XMLViewerStore.dialogMerge = data;
+      },
+    },
     file: {
       get() {},
       set(data) {

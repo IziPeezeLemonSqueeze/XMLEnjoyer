@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR lff">
-    <q-header reveal elevated class="bg-green-6 text-white" height-hint="98">
+    <q-header reveal elevated class="bg-grey-6 text-white" height-hint="98">
       <q-toolbar>
         <q-toolbar-title>
           <q-avatar>
@@ -10,7 +10,7 @@
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
-    <q-page-container class="bg-green-10 full-width">
+    <q-page-container class="bg-grey-10 full-width">
       <q-page class="row full-width">
         <div
           class="col-5 q-pa-md text-white"
@@ -38,7 +38,7 @@
 
               <q-item-section>
                 <strong>{{ item.name }}</strong>
-                <q-tooltip class="bg-green-9 text-body2" :offset="[10, 10]">
+                <q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
                   Percorso:
                   <strong>{{ item.path }}</strong>
                 </q-tooltip>
@@ -49,6 +49,7 @@
         <q-separator vertical dark />
         <div class="col full-width">
           <XMLViewer />
+          <MergeVue />
         </div>
       </q-page>
     </q-page-container>
@@ -62,6 +63,7 @@ import { useHistoryStore } from "./stores/history";
 import { useXMLViewerStore } from "./stores/xml_viewer";
 
 import XMLViewer from "./pages/XMLViewer.vue";
+import MergeVue from "./pages/Merge.vue";
 
 export default defineComponent({
   name: "App",
@@ -77,6 +79,7 @@ export default defineComponent({
   },
   components: {
     XMLViewer,
+    MergeVue,
   },
 });
 </script>
