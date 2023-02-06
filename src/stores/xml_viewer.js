@@ -10,6 +10,10 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     dialogMerge: false,
 
+    dialogModifyType: false,
+
+    nodeOnModify: {},
+
     selectedXML: [],
 
   }),
@@ -18,7 +22,9 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     GET_SELECTED_XML: (state) => state.selectedXML,
 
-    GET_DIALOG_MERGE_HIDE: (state) => state.dialogMerge
+    GET_DIALOG_MERGE_HIDE: (state) => state.dialogMerge,
+
+    GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType
 
   },
   actions: {
@@ -161,6 +167,63 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         }
       });
 
+    },
+
+    ADD_TYPE_ON_XML(data)
+    {
+      this.parsedFile[data.index].nodes.push({
+        members: JSON.stringify([]),
+        name: JSON.stringify({ '#text': data.name })
+      })
+    },
+
+    SET_TYPE_ON_MODIFY(data)
+    {
+      console.log(data.node)
+      this.nodeOnModify.indexSelected = data.parsedFileIndex;
+      this.nodeOnModify.indexNodeSelected = data.parsedFileNodeIndex;
+      this.nodeOnModify.members = JSON.parse(data.node.members);
+      this.nodeOnModify.name = JSON.parse(data.node.name);
+    },
+
+    DELETE_TYPE_FROM_ONMODIFY(data)
+    {
+      this.nodeOnModify.members.splice(data, 1);
+    },
+
+    ADD_TYPE_FROM_ONMODIFY()
+    {
+      this.nodeOnModify.members.push({ "#text": "" });
+    },
+
+    SORT_TYPES_FROM_ONMODIFY()
+    {
+      let ord = this.nodeOnModify.members.sort((a, b) =>
+      {
+        if (a['#text'] < b['#text'])
+        {
+          return -1
+        }
+        if (a['#text'] > b['#text'])
+        {
+          return 1
+        }
+        return 0
+      });
+      console.log(ord)
+    },
+
+    SAVE_TYPE_FROM_ONMODIFY()
+    {
+
+      console.log(JSON.stringify(this.nodeOnModify.members))
+      this.parsedFile[this.nodeOnModify.indexSelected]
+        .nodes[this.nodeOnModify.indexNodeSelected]
+        .members = JSON.stringify(this.nodeOnModify.members);
+
+      this.parsedFile[this.nodeOnModify.indexSelected]
+        .nodes[this.nodeOnModify.indexNodeSelected]
+        .name = JSON.stringify(this.nodeOnModify.name);
     }
   },
 });

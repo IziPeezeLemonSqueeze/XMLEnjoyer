@@ -26,7 +26,7 @@
       <q-card-section>
         <div
           class="col q-pa-md"
-          v-if="XMLViewerStore.GET_SELECTED_XML.length < 1"
+          v-if="XMLViewerStore.GET_SELECTED_XML.length < 2"
         >
           Per utilizzare la funzione di Merge devi prima selezionare due o più
           XML

@@ -50,6 +50,7 @@
         <div class="col full-width">
           <XMLViewer />
           <MergeVue />
+          <EditType />
         </div>
       </q-page>
     </q-page-container>
@@ -64,6 +65,7 @@ import { useXMLViewerStore } from "./stores/xml_viewer";
 
 import XMLViewer from "./pages/XMLViewer.vue";
 import MergeVue from "./pages/Merge.vue";
+import EditType from "./pages/EditType.vue";
 
 export default defineComponent({
   name: "App",
@@ -80,6 +82,7 @@ export default defineComponent({
   components: {
     XMLViewer,
     MergeVue,
+    EditType,
   },
 });
 </script>

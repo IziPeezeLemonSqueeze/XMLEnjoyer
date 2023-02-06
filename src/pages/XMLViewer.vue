@@ -68,7 +68,6 @@
           <draggable
             class="row no-wrap dropArea"
             :list="XMLViewerStore.parsedFile"
-            @change="log"
             animation="300"
             easing="cubic-bezier(1, 0, 0, 1)"
           >
@@ -214,9 +213,14 @@
                     rounded
                     label="Aggiungi <Types/>"
                     icon="fa-solid fa-circle-plus"
+                    @click="
+                      XMLViewerStore.ADD_TYPE_ON_XML({
+                        index: index,
+                        name: 'NewType',
+                      })
+                    "
                   />
                   <q-btn dense flat rounded icon="fa-solid fa-arrow-down-a-z" />
-                  <q-btn dense flat rounded icon="fa-solid fa-arrow-down-z-a" />
                 </q-bar>
                 <q-scroll-area style="height: 500px">
                   <draggable
@@ -224,61 +228,80 @@
                     :list="item.nodes"
                     animation="300"
                     easing="cubic-bezier(1, 0, 0, 1)"
-                    @change="log"
                   >
                     <q-item
                       tag="div"
                       v-for="(el, idxEl) in item.nodes"
                       :key="idxEl"
-                      clickable="false"
-                      focused="false"
-                      manual-focus="true"
+                      :clickable="false"
+                      :focused="false"
+                      :manual-focus="true"
                     >
-                      <q-btn icon="fa-solid fa-trash-can" dense flat size="xs">
-                        <q-popup-edit
-                          position="cover"
-                          v-slot="scope"
-                          class="q-pa-md bg-grey-5"
+                      <div class="col-1">
+                        <q-btn
+                          icon="fa-solid fa-trash-can"
+                          dense
+                          flat
+                          size="xs"
                         >
-                          <div
-                            class="col q-ma-sx text-center text-black"
-                            style="max-height: 50px; min-height: 50px"
+                          <q-popup-edit
+                            position="cover"
+                            v-slot="scope"
+                            class="q-pa-md bg-grey-5"
                           >
-                            <div class="row q-pa-sx">
-                              <strong> Eliminare ? </strong><br />
-                            </div>
-
                             <div
-                              class="q-ma-sm row absolute-bottom"
-                              style="justify-content: center"
+                              class="col q-ma-sx text-center text-black"
+                              style="max-height: 50px; min-height: 50px"
                             >
-                              <q-space />
-                              <q-btn
-                                flat
-                                dense
-                                class="q-pa-sx"
-                                label="si"
-                                @click="
-                                  XMLViewerStore.REMOVE_NODE(index, idxEl);
-                                  scope.cancel();
-                                "
-                              />
-                              <q-space />
-                              <q-btn
-                                dense
-                                color="red"
-                                class="q-pa-sx"
-                                label="no"
-                                @click="scope.cancel"
-                              />
-                              <q-space />
+                              <div class="row q-pa-sx">
+                                <strong> Eliminare ? </strong><br />
+                              </div>
+
+                              <div
+                                class="q-ma-sm row absolute-bottom"
+                                style="justify-content: center"
+                              >
+                                <q-space />
+                                <q-btn
+                                  flat
+                                  dense
+                                  class="q-pa-sx"
+                                  label="si"
+                                  @click="
+                                    XMLViewerStore.REMOVE_NODE(index, idxEl);
+                                    scope.cancel();
+                                  "
+                                />
+                                <q-space />
+                                <q-btn
+                                  dense
+                                  color="red"
+                                  class="q-pa-sx"
+                                  label="no"
+                                  @click="scope.cancel"
+                                />
+                                <q-space />
+                              </div>
                             </div>
-                          </div>
-                        </q-popup-edit>
-                      </q-btn>
+                          </q-popup-edit>
+                        </q-btn>
+                        <q-btn
+                          icon="fa-solid fa-pencil"
+                          dense
+                          flat
+                          size="xs"
+                          @click="
+                            openAndEditType({
+                              parsedFileIndex: index,
+                              parsedFileNodeIndex: idxEl,
+                              node: el,
+                            })
+                          "
+                        />
+                      </div>
                       <q-item-section>
                         <div
-                          class="list-group-item bg-gray-300 m-1 p-3 rounded-md text-left q-ma-md"
+                          class="list-group-item bg-gray-300 m-1 p-3 rounded-md text-left"
                           style="max-width: 250px; font-size: 11px"
                         >
                           <div
@@ -333,6 +356,14 @@ export default {
         this.XMLViewerStore.dialogMerge = data;
       },
     },
+    dialogModifyType: {
+      get() {
+        return this.XMLViewerStore.dialogModifyType;
+      },
+      set(data) {
+        this.XMLViewerStore.dialogModifyType = data;
+      },
+    },
     file: {
       get() {},
       set(data) {
@@ -351,7 +382,13 @@ export default {
       }
     });
   },
-  methods: {},
+  methods: {
+    openAndEditType(data) {
+      this.dialogModifyType = true;
+
+      this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
+    },
+  },
   setup() {
     let xmlText = null;
     const XMLViewerStore = useXMLViewerStore();
