@@ -1,8 +1,5 @@
 <template>
-  <q-dialog
-    v-model="XMLViewerStore.GET_DIALOG_MODIFY_TYPE_HIDE"
-    class="q-pa-md q-gutter-sm"
-  >
+  <q-dialog v-model="XMLViewerStore.GET_DIALOG_MODIFY_TYPE_HIDE">
     <q-card dark class="bg-grey-4 text-black">
       <q-toolbar>
         <q-icon size="md" name="fa-solid fa-object-group" />
@@ -51,8 +48,8 @@
               <q-btn
                 dense
                 color="red"
-                icon="fa-solid fa-trash-can"
-                @click="deleteType(index)"
+                icon="fa-solid fa-trash"
+                @click="XMLViewerStore.DELETE_TYPE_FROM_ONMODIFY(index)"
               />
             </q-item-section>
             <q-item-section>
@@ -96,16 +93,6 @@
         </q-item-label>
         <q-item-label caption>NAME</q-item-label>
       </q-card-section>
-      <q-card-actions>
-        <q-btn
-          color="green"
-          dense
-          icon="fa-solid fa-save"
-          label="Salva"
-          class="full-width"
-          @click="XMLViewerStore.SAVE_TYPE_FROM_ONMODIFY"
-        />
-      </q-card-actions>
     </q-card>
   </q-dialog>
 </template>
@@ -122,11 +109,7 @@ export default {
       XMLViewerStore,
     };
   },
-  methods: {
-    deleteType(data) {
-      this.XMLViewerStore.DELETE_TYPE_FROM_ONMODIFY(data);
-    },
-  },
+  methods: {},
 };
 </script>
 <style></style>

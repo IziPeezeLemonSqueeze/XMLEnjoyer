@@ -204,7 +204,8 @@
                   dark
                   style="
                     border-radius: 0 0 10px 10px;
-                    justify-content: space-evenly;
+                    justify-content: space-eve;
+                    justify-content: center;
                   "
                 >
                   <q-btn
@@ -216,22 +217,33 @@
                     @click="
                       XMLViewerStore.ADD_TYPE_ON_XML({
                         index: index,
-                        name: 'NewType',
+                        name: 'CHANGE_ME',
                       })
                     "
                   />
-                  <q-btn dense flat rounded icon="fa-solid fa-arrow-down-a-z" />
+                  <q-btn
+                    dense
+                    flat
+                    rounded
+                    label="Ordina"
+                    icon="fa-solid fa-arrow-down-a-z"
+                    @click="
+                      XMLViewerStore.SORT_TYPES_AND_MEMBERS({
+                        indexParsedFile: index,
+                      })
+                    "
+                  />
                 </q-bar>
                 <q-scroll-area style="height: 500px">
                   <draggable
                     class="dragArea list-group w-full"
-                    :list="item.nodes"
+                    :list="item.parsed.Package.types"
                     animation="300"
                     easing="cubic-bezier(1, 0, 0, 1)"
                   >
                     <q-item
                       tag="div"
-                      v-for="(el, idxEl) in item.nodes"
+                      v-for="(el, idxEl) in item.parsed.Package.types"
                       :key="idxEl"
                       :clickable="false"
                       :focused="false"
@@ -306,16 +318,16 @@
                         >
                           <div
                             style="min-width: max-content"
-                            v-for="(memb, membindex) in JSON.parse(el.members)"
+                            v-for="(memb, membindex) in el.members"
                           >
                             MEMBERS:
-                            <strong :key="membindex">{{
-                              Object.values(memb)[0]
-                            }}</strong>
+                            <strong :key="membindex"
+                              >{{ Object.values(memb)[0] }}
+                            </strong>
                           </div>
                           <div>
                             NAME:
-                            <strong> {{ JSON.parse(el.name)["#text"] }}</strong>
+                            <strong> {{ el.name["#text"] }}</strong>
                           </div>
 
                           <q-separator />

@@ -6,7 +6,8 @@
   "author": "IziPeezeLemonSqueeze <65863208+IziPeezeLemonSqueeze@users.noreply.github.com>",
   "private": true,
   "scripts": {
-    "test": "echo \"No test specified\" && exit 0"
+    "test": "echo \"No test specified\" && exit 0",
+    "dev": "quasar dev -m electron"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",

@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import { XMLParser } from "fast-xml-parser";
 import { useHistoryStore } from "./history";
 
 export const useXMLViewerStore = defineStore("xml_viewer", {
@@ -46,8 +46,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     REMOVE_NODE(index, idxEl)
     {
-      console.log("remove_node", index, idxEl);
-      this.parsedFile[index].nodes.splice(idxEl, 1);
+      this.parsedFile[index].parsed["Package"]["types"].splice(idxEl, 1);
     },
 
     SET_TEXT_FILE(data)
@@ -61,14 +60,25 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       fr.onloadend = async (end) =>
       {
 
-        console.log(end.target.result);
+        const alwaysArray = [
+          "Package.types.members"
+        ];
 
         let parser = new XMLParser({
           alwaysCreateTextNode: true,
           ignoreAttributes: false,
           ignoreDeclaration: false,
-          parseAttributeValue: true,
+          parseAttributeValue: false,
           commentPropName: "#comment",
+          isArray: (name, jpath, isLeafNode, isAttribute) =>
+          {
+            //console.log(name, jpath, isLeafNode, isAttribute)
+            switch (name)
+            {
+              case 'members': return true;
+              default: return false;
+            }
+          }
         });
 
         let pf = {
@@ -84,7 +94,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
           parsed: parser.parse(end.target.result),
         };
 
-        pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
+        // pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
 
         this.parsedFile.push(pf);
 
@@ -101,37 +111,33 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       fr.readAsText(data);
     },
 
-    CREATE_NODES(data)
-    {
-      let node = [];
-      let members = [];
+    /*    CREATE_NODES(data)
+       {
+         let node = [];
+         let members = [];
 
 
-      data.Package.types.forEach((element) =>
-      {
+         data.Package.types.forEach((element) =>
+         {
+           if (Object.values(element.members).length > 1)
+           {
+             Object.values(element.members).forEach(m =>
+             {
+               members.push(m);
 
-        console.log('memb', element.members)
-        if (Object.values(element.members).length > 1)
-        {
-          Object.values(element.members).forEach(m =>
-          {
-            members.push(m);
-
-          });
-        } else
-        {
-          members.push(element.members)
-        }
-
-
-        node.push({
-          members: JSON.stringify(members),
-          name: JSON.stringify(element.name),
-        });
-        members = []
-      });
-      return node;
-    },
+             });
+           } else
+           {
+             members.push(element.members)
+           }
+           node.push({
+             members: JSON.stringify(members),
+             name: JSON.stringify(element.name),
+           });
+           members = []
+         });
+         return node;
+       }, */
 
     DELETE_XML(data)
     {
@@ -142,9 +148,9 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
           this.parsedFile.splice(index, 1);
           this.historyStore.history.splice(index, 1);
         }
+      });
 
-
-      })
+      this.selectedXML = this.selectedXML.filter(xml => xml != data);
     },
 
     GET_CHECKED_XML()
@@ -171,9 +177,9 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_TYPE_ON_XML(data)
     {
-      this.parsedFile[data.index].nodes.push({
-        members: JSON.stringify([]),
-        name: JSON.stringify({ '#text': data.name })
+      this.parsedFile[data.index].parsed["Package"]["types"].push({
+        members: [],
+        name: { '#text': data.name }
       })
     },
 
@@ -182,8 +188,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       console.log(data.node)
       this.nodeOnModify.indexSelected = data.parsedFileIndex;
       this.nodeOnModify.indexNodeSelected = data.parsedFileNodeIndex;
-      this.nodeOnModify.members = JSON.parse(data.node.members);
-      this.nodeOnModify.name = JSON.parse(data.node.name);
+      this.nodeOnModify.members = data.node.members;
+      this.nodeOnModify.name = data.node.name;
     },
 
     DELETE_TYPE_FROM_ONMODIFY(data)
@@ -198,7 +204,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     SORT_TYPES_FROM_ONMODIFY()
     {
-      let ord = this.nodeOnModify.members.sort((a, b) =>
+      this.nodeOnModify.members.sort((a, b) =>
       {
         if (a['#text'] < b['#text'])
         {
@@ -210,20 +216,49 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         }
         return 0
       });
-      console.log(ord)
     },
 
-    SAVE_TYPE_FROM_ONMODIFY()
+    SORT_TYPES_AND_MEMBERS(data)
+    {
+      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].sort((a, b) =>
+      {
+        let aa = a.name, bb = b.name;
+        if (aa['#text'] < bb['#text'])
+        {
+          return -1
+        }
+        if (aa['#text'] > bb['#text'])
+        {
+          return 1
+        }
+        return 0
+      });
+
+      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].forEach((n) =>
+      {
+        let mem = n.members;
+
+        mem.sort((a, b) =>
+        {
+          if (a['#text'] < b['#text'])
+          {
+            return -1
+          }
+          if (a['#text'] > b['#text'])
+          {
+            return 1
+          }
+          return 0
+        });
+        n.members = mem;
+      });
+
+    },
+
+    UPDATE_PARSED_TYPES(data)
     {
 
-      console.log(JSON.stringify(this.nodeOnModify.members))
-      this.parsedFile[this.nodeOnModify.indexSelected]
-        .nodes[this.nodeOnModify.indexNodeSelected]
-        .members = JSON.stringify(this.nodeOnModify.members);
 
-      this.parsedFile[this.nodeOnModify.indexSelected]
-        .nodes[this.nodeOnModify.indexNodeSelected]
-        .name = JSON.stringify(this.nodeOnModify.name);
     }
   },
 });
