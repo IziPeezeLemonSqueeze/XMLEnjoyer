@@ -60,10 +60,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       fr.onloadend = async (end) =>
       {
 
-        const alwaysArray = [
-          "Package.types.members"
-        ];
-
         let parser = new XMLParser({
           alwaysCreateTextNode: true,
           ignoreAttributes: false,

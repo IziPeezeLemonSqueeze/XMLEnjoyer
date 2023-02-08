@@ -10,20 +10,22 @@ export const useMergeToolStore = defineStore("merge_tool", {
 
     validationXml: false,
     reorderOnFinalXml: false,
-    progress: 0,
+    progress: false,
 
     labelProgress: '',
 
     merging: false,
 
-    //DEBUG
-    mergedd: null,
-    xmlsdd: null
+
 
   }),
   actions: {
     START_MERGING()
     {
+      this.merging = true;
+      this.labelProgress = 'MERGING';
+      this.progress = true;
+
       let xmls = this.XMLViewerStore.parsedFile.filter((pf) => pf.checked);
       let merged = xmls.shift();
       const finalXml = JSON.parse(JSON.stringify(merged));
@@ -73,9 +75,6 @@ export const useMergeToolStore = defineStore("merge_tool", {
 
       });
 
-      this.mergedd = mergedTypes;
-      this.xmlsdd = xmls;
-
       finalXml.index = 'MERGED';
       finalXml.uuid = crypto.randomUUID();
       finalXml.pathFile = "";
@@ -85,26 +84,30 @@ export const useMergeToolStore = defineStore("merge_tool", {
       this.XMLViewerStore.parsedFile.forEach(pf =>
       {
         pf.checked = false;
+        this.XMLViewerStore.selectedXML = [];
       });
+
       this.XMLViewerStore.parsedFile.push(finalXml)
+      this.XMLViewerStore.selectedXML.push(finalXml.uuid)
+      this.labelProgress = 'COMPLETE';
 
-
-
-
-
-      /*      const builder = new XMLBuilder({
-             format: true,
-           });
-
-
-
-           if (state.validationXml)
-           {
-             this._VALIDATION_XML();
-
-           }
-      */
     },
+
+    EXPORT_XML()
+    {
+      const builder = new XMLBuilder({
+        format: true,
+        ignoreAttributes: false,
+      });
+
+
+      return builder.build(
+        this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0].parsed/* .Package.types  */
+      )
+
+
+    },
+
 
     _VALIDATION_XML()
     {

@@ -2,16 +2,28 @@
   <q-layout view="hHh lpR lff">
     <q-header reveal elevated class="bg-grey-6 text-white" height-hint="98">
       <q-toolbar>
-        <q-toolbar-title>
+        <q-toolbar-title style="-webkit-app-region: drag">
           <q-avatar>
             <q-icon name="fa-solid fa-file-code" size="30px" />
           </q-avatar>
           {{ '<?XML Enjoyer @Salesforce version="0.1a" ?>' }}
         </q-toolbar-title>
+        <q-btn dense flat icon="minimize" @click="minimizeApp" />
+        <q-btn dense flat icon="crop_square" @click="maximizeApp" />
+        <q-btn dense flat icon="close" @click="quitApp" />
+        <q-separator dark spaced vertical />
+        <q-btn
+          dense
+          flat
+          round
+          icon="fa-solid fa-gear"
+          @click="toggleRightDrawer"
+        />
       </q-toolbar>
     </q-header>
     <q-page-container class="bg-grey-10 full-width">
-      <q-page class="row full-width">
+      <!--    <q-page class="row full-width"> -->
+      <div class="row">
         <div
           class="col-5 q-pa-md text-white"
           style="max-width: 250px; min-width: auto; border-color: green"
@@ -47,12 +59,13 @@
           </q-list>
         </div>
         <q-separator vertical dark />
-        <div class="col full-width">
+        <div class="col">
           <XMLViewer />
           <MergeVue />
           <EditType />
         </div>
-      </q-page>
+      </div>
+      <!--  </q-page> -->
     </q-page-container>
   </q-layout>
 </template>
@@ -83,6 +96,19 @@ export default defineComponent({
     XMLViewer,
     MergeVue,
     EditType,
+  },
+  methods: {
+    minimizeApp() {
+      window.myAPI.minimizeApp();
+    },
+
+    maximizeApp() {
+      window.myAPI.maximizeApp();
+    },
+
+    quitApp() {
+      window.myAPI.quitApp();
+    },
   },
 });
 </script>

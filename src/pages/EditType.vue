@@ -1,6 +1,10 @@
 <template>
   <q-dialog v-model="XMLViewerStore.GET_DIALOG_MODIFY_TYPE_HIDE">
-    <q-card dark class="bg-grey-4 text-black">
+    <q-card
+      dark
+      class="bg-grey-4 text-black"
+      style="width: -webkit-fill-available"
+    >
       <q-toolbar>
         <q-icon size="md" name="fa-solid fa-object-group" />
 
@@ -40,7 +44,6 @@
         <q-list
           bordered
           separator
-          style="max-width: 318px"
           v-for="(el, index) in XMLViewerStore.nodeOnModify.members"
         >
           <q-item clickable v-ripple :key="index">

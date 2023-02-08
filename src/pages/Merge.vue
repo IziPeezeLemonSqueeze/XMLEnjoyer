@@ -15,20 +15,13 @@
           dense
           icon="close"
           v-close-popup
-          @click="XMLViewerStore.dialogMerge = false"
+          @click="closeMergingTool"
         />
       </q-toolbar>
 
       <q-separator spaced dark />
       <q-card-section>
-        <div
-          class="col q-pa-md"
-          v-if="XMLViewerStore.GET_SELECTED_XML.length < 2"
-        >
-          Per utilizzare la funzione di Merge devi prima selezionare due o più
-          XML
-        </div>
-        <div class="col q-pa-md" v-else>
+        <div class="col q-pa-md">
           <div
             class="row full-width"
             style="align-items: center; place-content: space-between"
@@ -45,40 +38,34 @@
                 </q-item>
               </q-list>
             </div>
-            <div class="col-auto">
+            <div
+              class="col-auto"
+              v-if="MergeToolStore.GET_LABEL_PROGRESS_BAR_STATUS != 'COMPLETE'"
+            >
               <q-icon name="fa-solid fa-arrow-right-long" />
             </div>
-            <div class="col-3" style="text-align: center">
+            <div
+              class="col-3"
+              style="text-align: center"
+              v-if="MergeToolStore.GET_LABEL_PROGRESS_BAR_STATUS != 'COMPLETE'"
+            >
               <q-icon name="fa-solid fa-file-code" size="50px" />
-              <q-input dense dark placeholder="package" style="margin-top: 5%">
-                <template dense v-slot:append>.xml</template>
-              </q-input>
+              <q-label>package.xml</q-label>
             </div>
           </div>
           <q-separator dark spaced />
           <div class="col q-pa-sm">
             <div class="q-gutter-sm">
-              <q-checkbox
-                dense
-                v-model="MergeToolStore.validationXml"
-                label="Validazione XML finale"
-              />
-              <q-checkbox
-                dense
-                v-model="MergeToolStore.reorderOnFinalXml"
-                label="Ordina TYPES nel file finale"
-              />
               <q-linear-progress
                 style="margin: 5% 0 -5% 0"
                 stripe
                 rounded
                 size="25px"
-                :value="MergeToolStore.GET_PROGRESS_BAR_STATUS"
+                :indeterminate="MergeToolStore.GET_PROGRESS_BAR_STATUS"
                 color="green"
               >
                 <div class="absolute-full flex flex-center">
                   <q-badge
-                    v-if="MergeToolStore.GET_PROGRESS_BAR_STATUS > 0"
                     color="white"
                     text-color="black"
                     :label="MergeToolStore.GET_LABEL_PROGRESS_BAR_STATUS"
@@ -90,7 +77,7 @@
         </div>
       </q-card-section>
       <q-separator spaced dark />
-      <q-card-actions v-if="XMLViewerStore.GET_SELECTED_XML.length > 1">
+      <q-card-actions>
         <q-space />
         <q-btn
           color="green"
@@ -118,6 +105,14 @@ export default {
       XMLViewerStore,
       MergeToolStore,
     };
+  },
+  methods: {
+    closeMergingTool() {
+      this.XMLViewerStore.dialogMerge = false;
+      this.MergeToolStore.labelProgress = "";
+      this.MergeToolStore.progress = false;
+      this.MergeToolStore.merging = false;
+    },
   },
 };
 </script>

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Salesforce package xml tools ",
   "productName": "XmlEnjoyer",
-  "author": "Stefano Pastore @ NTTDATA",
+  "author": "IziPeezeLemonSqueeze <65863208+IziPeezeLemonSqueeze@users.noreply.github.com>",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",

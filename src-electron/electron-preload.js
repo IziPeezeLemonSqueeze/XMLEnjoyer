@@ -17,4 +17,26 @@
  */
 import { contextBridge, ipcRenderer } from "electron";
 
-contextBridge.exposeInMainWorld("myAPI", {});
+contextBridge.exposeInMainWorld("myAPI", {
+
+  quitApp: () =>
+  {
+    ipcRenderer.invoke("quit-app")
+  },
+
+  minimizeApp: () =>
+  {
+    ipcRenderer.invoke("min-app")
+  },
+
+  maximizeApp: () =>
+  {
+    ipcRenderer.invoke("max-app")
+  },
+
+  savePackage: (value) =>
+  {
+    ipcRenderer.invoke("save-package", value)
+  }
+
+});

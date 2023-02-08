@@ -166,7 +166,7 @@ module.exports = configure(function (ctx)
 
       inspectPort: 5858,
 
-      bundler: "packager", // 'packager' or 'builder'
+      //bundler: "packager", // 'packager' or 'builder'
 
       packager: {
         // https://github.com/electron-userland/electron-packager/blob/master/docs/api.md#options
@@ -178,12 +178,22 @@ module.exports = configure(function (ctx)
         // Windows only
         // win32metadata: { ... }
       },
+      /*
+            builder: {
+              // https://www.electron.build/configuration/configuration
 
+              appId: "xmlenjoyer",
+              win: {
+                target: "nsis",
+              },
+            }, */
+      bundler: 'builder', // set here instead of using command line flag --bundler
       builder: {
-        // https://www.electron.build/configuration/configuration
-
-        appId: "xmlenjoyer",
-      },
+        appId: 'com.gmail.p.stefano92',
+        win: {
+          target: 'nsis'
+        }
+      }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/developing-browser-extensions/configuring-bex

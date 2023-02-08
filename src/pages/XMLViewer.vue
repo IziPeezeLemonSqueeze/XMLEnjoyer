@@ -23,6 +23,8 @@
           size="md"
           color="grey-6"
           icon="fa-solid fa-file-export"
+          :disabled="XMLViewerStore.GET_SELECTED_XML.length != 1"
+          @click="savePackage"
           ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
             Esporta XML
           </q-tooltip></q-btn
@@ -35,36 +37,15 @@
           color="grey-6"
           icon="fa-solid fa-object-group"
           @click="dialogMerge = !dialogMerge"
+          :disabled="XMLViewerStore.GET_SELECTED_XML.length < 2"
           ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
             Unisci XML
           </q-tooltip></q-btn
         >
-        <q-separator vertical dark spaced />
-        <q-btn
-          dark
-          color="grey-6"
-          class="text-white"
-          size="md"
-          icon="fa-solid fa-clone"
-          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
-            Clona XML
-          </q-tooltip></q-btn
-        >
-        <q-separator vertical dark spaced />
-        <q-btn
-          dark
-          color="grey-6"
-          class="text-white"
-          size="md"
-          icon="fa-solid fa-certificate"
-          ><q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
-            Valida XML
-          </q-tooltip></q-btn
-        >
       </div>
       <q-separator dark />
-      <q-scroll-area horizontal style="height: 720px" class="full-width">
-        <div class="row no-wrap q-pa-sm text-pre-wrap" style="height: 760px">
+      <q-scroll-area horizontal style="height: 800px" class="full-width">
+        <div class="row no-wrap q-pa-sm text-pre-wrap" style="height: 900px">
           <draggable
             class="row no-wrap dropArea"
             :list="XMLViewerStore.parsedFile"
@@ -354,7 +335,9 @@
 </template>
 <script>
 import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import { useMergeToolStore } from "src/stores/mergeTool";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
+
 import { VueDraggableNext } from "vue-draggable-next";
 
 export default {
@@ -400,14 +383,21 @@ export default {
 
       this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
     },
+
+    savePackage() {
+      let xml = this.MergeToolStore.EXPORT_XML();
+      window.myAPI.savePackage(xml);
+    },
   },
   setup() {
     let xmlText = null;
     const XMLViewerStore = useXMLViewerStore();
+    const MergeToolStore = useMergeToolStore();
 
     return {
       xmlText,
       XMLViewerStore,
+      MergeToolStore,
     };
   },
   components: {
