@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeTheme } from "electron";
+import { app, BrowserWindow, ipcMain, nativeTheme, Notification } from "electron";
 import path from "path";
 import os from "os";
 const { dialog } = require('electron')
@@ -30,7 +30,7 @@ function createWindow()
     titleBarStyle: 'hidden',
     titleBarOverlay: false,
     width: 1450,
-    height: 1100,
+    height: 1001,
     resizable: false,
     useContentSize: true,
     webPreferences: {
@@ -147,6 +147,8 @@ ipcMain.handle("save-package", async (value, ...args) =>
       {
         if (err) throw err;
         console.log('Saved!');
+        //mainWindow.webContents.send('notify-saved-xml', file.filePath.toString());
+        new Notification({ title: 'XMLEnjoyer', body: 'XML Package salvato:\n' + file.filePath.toString() }).show();
       });
     }
   }).catch(err =>

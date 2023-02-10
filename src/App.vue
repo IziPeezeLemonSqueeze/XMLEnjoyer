@@ -1,12 +1,12 @@
 <template>
-  <q-layout view="hHh lpR lff">
-    <q-header reveal elevated class="bg-grey-6 text-white" height-hint="98">
+  <q-layout>
+    <q-header reveal elevated class="bg-blue-3 text-white" height-hint="98">
       <q-toolbar>
         <q-toolbar-title style="-webkit-app-region: drag">
           <q-avatar>
-            <q-icon name="fa-solid fa-file-code" size="30px" />
+            <img src="https://i.postimg.cc/XqdmjGqf/logo3.png" />
           </q-avatar>
-          {{ '<?XML Enjoyer @Salesforce version="0.1a" ?>' }}
+          {{ "< XML Enjoyer @Salesforce >" }}
         </q-toolbar-title>
         <q-btn dense flat icon="minimize" @click="minimizeApp" />
         <q-btn dense flat icon="crop_square" @click="maximizeApp" />
@@ -22,10 +22,9 @@
       </q-toolbar>
     </q-header>
     <q-page-container class="bg-grey-10 full-width">
-      <!--    <q-page class="row full-width"> -->
-      <div class="row">
+      <q-page class="row full-width">
         <div
-          class="col-5 q-pa-md text-white"
+          class="col q-pa-md text-white"
           style="max-width: 250px; min-width: auto; border-color: green"
         >
           HISTORY XML
@@ -59,19 +58,18 @@
           </q-list>
         </div>
         <q-separator vertical dark />
-        <div class="col">
-          <XMLViewer />
-          <MergeVue />
-          <EditType />
-        </div>
-      </div>
-      <!--  </q-page> -->
+
+        <XMLViewer />
+        <MergeVue />
+        <EditType />
+      </q-page>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
 import { defineComponent } from "vue";
+import { useQuasar, Notify } from "quasar";
 import { useAppStore } from "src/stores/app";
 import { useHistoryStore } from "./stores/history";
 import { useXMLViewerStore } from "./stores/xml_viewer";
@@ -91,6 +89,10 @@ export default defineComponent({
       historyStore,
       xmlStore,
     };
+  },
+  mounted() {
+    this.xmlStore.$q = useQuasar();
+    this.xmlStore.Notify = Notify;
   },
   components: {
     XMLViewer,

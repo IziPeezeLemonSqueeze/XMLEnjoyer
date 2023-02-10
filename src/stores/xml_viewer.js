@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { XMLParser } from "fast-xml-parser";
 import { useHistoryStore } from "./history";
+import { Notify } from "quasar";
 
 export const useXMLViewerStore = defineStore("xml_viewer", {
   state: () => ({
@@ -15,6 +16,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     nodeOnModify: {},
 
     selectedXML: [],
+    $q: null,
+    Notify: null,
 
   }),
   getters: {
@@ -107,34 +110,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       fr.readAsText(data);
     },
 
-    /*    CREATE_NODES(data)
-       {
-         let node = [];
-         let members = [];
-
-
-         data.Package.types.forEach((element) =>
-         {
-           if (Object.values(element.members).length > 1)
-           {
-             Object.values(element.members).forEach(m =>
-             {
-               members.push(m);
-
-             });
-           } else
-           {
-             members.push(element.members)
-           }
-           node.push({
-             members: JSON.stringify(members),
-             name: JSON.stringify(element.name),
-           });
-           members = []
-         });
-         return node;
-       }, */
-
     DELETE_XML(data)
     {
       this.parsedFile.forEach((el, index) =>
@@ -177,6 +152,11 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         members: [],
         name: { '#text': data.name }
       })
+      this.Notify.create({
+        message: 'Aggiunto un nuovo TYPES a XML: ' + this.parsedFile[data.index].index,
+        color: 'green',
+        timeout: 3000,
+      });
     },
 
     SET_TYPE_ON_MODIFY(data)
@@ -195,6 +175,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_TYPE_FROM_ONMODIFY()
     {
+
       this.nodeOnModify.members.push({ "#text": "" });
     },
 
@@ -250,11 +231,5 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       });
 
     },
-
-    UPDATE_PARSED_TYPES(data)
-    {
-
-
-    }
   },
 });

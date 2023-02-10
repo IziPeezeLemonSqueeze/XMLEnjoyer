@@ -16,6 +16,8 @@
  *   })
  */
 import { contextBridge, ipcRenderer } from "electron";
+import { Notify } from "quasar";
+
 
 contextBridge.exposeInMainWorld("myAPI", {
 
@@ -40,3 +42,9 @@ contextBridge.exposeInMainWorld("myAPI", {
   }
 
 });
+
+/* ipcRenderer.on('notify-saved-xml', (e, data) =>
+{
+  console.log('saved not', Notify)
+  Notify.create({ message: 'XML SALVATO: ' + data });
+}) */
