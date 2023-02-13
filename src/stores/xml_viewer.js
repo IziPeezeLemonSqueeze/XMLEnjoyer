@@ -19,6 +19,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     $q: null,
     Notify: null,
 
+    metadataRetrieved: [],
+
   }),
   getters: {
     GET_TEXT_FILE: (state) => state.textFile,
@@ -27,7 +29,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     GET_DIALOG_MERGE_HIDE: (state) => state.dialogMerge,
 
-    GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType
+    GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType,
 
   },
   actions: {
@@ -231,5 +233,16 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       });
 
     },
+
+    SET_METADATA_RETRIEVED(data)
+    {
+      this.metadataRetrieved = [];
+      let ret = JSON.parse(data);
+      console.log(ret)
+      ret.result.forEach(mdt =>
+      {
+        this.metadataRetrieved.push(mdt.fullName);
+      });
+    }
   },
 });

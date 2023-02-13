@@ -3,6 +3,8 @@ import path from "path";
 import os from "os";
 const { dialog } = require('electron')
 const fs = require('fs');
+import { exec } from "child_process";
+
 
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
 var { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
@@ -77,6 +79,8 @@ app.whenReady().then((ready) =>
   console.log(ready);
 
   createWindow();
+
+
 });
 
 app.on("window-all-closed", () =>
@@ -117,7 +121,6 @@ ipcMain.handle("max-app", () =>
 
 });
 
-
 ipcMain.handle("save-package", async (value, ...args) =>
 {
   console.log(value, args[0])
@@ -157,3 +160,123 @@ ipcMain.handle("save-package", async (value, ...args) =>
   });
 
 });
+
+function updateOnLogOperation()
+{
+  let _CLI = exec('sfdx force:auth:list --json', {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+
+  let bufferData = '';
+
+  _CLI.stdout.on('data', (chunk) =>
+  {
+    //    console.log('CHUNK', chunk);
+    bufferData += chunk;
+  });
+
+  _CLI.on('exit', (code, signal) =>
+  {
+    mainWindow.webContents.send('auth-list-readed', bufferData);
+  });
+}
+
+ipcMain.handle('auth-list', () =>
+{
+  /*   let _CLI = exec('sfdx force:auth:list --json', {
+      maxBuffer: 1024 * 1024 * 8,
+    });
+
+    let bufferData = '';
+
+    _CLI.stdout.on('data', (chunk) =>
+    {
+      //    console.log('CHUNK', chunk);
+      bufferData += chunk;
+    });
+
+    _CLI.stdin.on('data', (data) =>
+    {
+      //    console.log('IN', data);
+    });
+
+    _CLI.stderr.on('data', (data) =>
+    {
+      //    console.log('ERR', data);
+    });
+
+    _CLI.on('exit', (code, signal) =>
+    {
+      mainWindow.webContents.send('auth-list-readed', bufferData);
+    }); */
+
+  updateOnLogOperation()
+
+});
+
+ipcMain.handle('logout-org', (value, ...args) =>
+{
+
+  let _CLI = exec('sfdx auth:logout -u ' + args[0] + ' -p', {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+
+  _CLI.stderr.on('data', (data) =>
+  {
+    console.log('ERR', data);
+  });
+
+  _CLI.on('exit', (code, signal) =>
+  {
+    updateOnLogOperation();
+  });
+});
+
+ipcMain.handle('login-org', (value, ...args) =>
+{
+  console.log('LOGIN ALIAS', args[0])
+  let _CLI = exec('sfdx force:auth:web:login -a ' + args[0], {
+    maxBuffer: 1024 * 1024 * 8,
+    timeout: 10000
+  });
+
+  _CLI.on('exit', (code, signal) =>
+  {
+    updateOnLogOperation();
+  });
+});
+
+
+ipcMain.handle('retrieve-metadata', async (value, ...args) =>
+{
+  const util = require('node:util');
+  const execc = util.promisify(require('node:child_process').exec);
+  const { stdout, stderr } = await execc(
+    'sfdx force:mdapi:listmetadata --json -u '
+    + args[0].org
+    + ' -m ' + args[0].mdtName
+    + ' -a ' + args[0].api, {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+  let bufferData = stdout;
+
+  /* _CLI.stdout.on('data', (chunk) =>
+  {
+    //    console.log('CHUNK', chunk);
+    bufferData += chunk;
+  });
+
+  _CLI.stderr.on('data', (data) =>
+  {
+    console.log('ERR', data);
+  });
+
+  _CLI.on('exit', (code, signal) =>
+  {
+    mainWindow.webContents.send('mdt-retrieved', bufferData);
+
+  }); */
+
+  return bufferData;
+
+})

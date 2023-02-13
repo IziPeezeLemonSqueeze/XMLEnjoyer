@@ -8,17 +8,79 @@
           </q-avatar>
           {{ "< XML Enjoyer @Salesforce >" }}
         </q-toolbar-title>
+        <q-select
+          dense
+          dark
+          standout="bg-blue-3 text-white"
+          v-model="appStore.selectedOrg"
+          :options="appStore.orgs"
+          label="ORG"
+          style="margin-right: 1%"
+        />
+        <q-btn dense flat round icon="fa-solid fa-gear" @click="loadSettings">
+          <q-menu
+            auto-close
+            style="width: max-content"
+            transition-show="jump-down"
+            transition-hide="jump-up"
+          >
+            <div class="bg-blue-3 row no-wrap q-pa-md">
+              <div class="column">
+                <div class="text-h6 text-white q-mb-md">Settings</div>
+                <q-input
+                  dense
+                  dark
+                  readonly
+                  v-model="appStore.apiVersion"
+                  label="API Version"
+                />
+                <q-btn
+                  dense
+                  dark
+                  flat
+                  class="text-white"
+                  label="SET API VERSION"
+                  style="padding: 1%; margin: 5%"
+                  @click="setApi"
+                />
+              </div>
+
+              <q-separator vertical inset class="q-mx-lg" />
+
+              <div class="column items-center">
+                <q-list dark bordered separator style="max-width: 318px">
+                  <q-item v-for="(el, ind) in appStore.orgsSetting" :id="ind">
+                    <q-item-section>
+                      <q-item-label overline>{{ el.alias }}</q-item-label>
+                      <q-item-label>{{ el.username }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section avatar>
+                      <q-btn
+                        dense
+                        flat
+                        color="red-4"
+                        icon="fa-solid fa-right-from-bracket"
+                        @click="logout(el.username)"
+                      />
+                    </q-item-section>
+                  </q-item>
+                  <q-item dense clickable v-ripple @click="dialogLogin">
+                    <q-item-section class="text-bold">
+                      AUTHORIZE NEW ORG
+                    </q-item-section>
+                    <q-item-section avatar>
+                      <q-icon dense color="green" name="fa-solid fa-plus" />
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </div>
+            </div>
+          </q-menu>
+        </q-btn>
+        <q-separator dark spaced vertical />
         <q-btn dense flat icon="minimize" @click="minimizeApp" />
         <q-btn dense flat icon="crop_square" @click="maximizeApp" />
         <q-btn dense flat icon="close" @click="quitApp" />
-        <q-separator dark spaced vertical />
-        <q-btn
-          dense
-          flat
-          round
-          icon="fa-solid fa-gear"
-          @click="toggleRightDrawer"
-        />
       </q-toolbar>
     </q-header>
     <q-page-container class="bg-grey-10 full-width">
@@ -81,18 +143,58 @@ import EditType from "./pages/EditType.vue";
 export default defineComponent({
   name: "App",
   setup() {
+    const $q = useQuasar();
     const appStore = useAppStore();
     const historyStore = useHistoryStore();
     const xmlStore = useXMLViewerStore();
+
+    function dialogLogin() {
+      console.log($q);
+      $q.dialog({
+        title: "NEW ORG CONNECTION",
+        message: "SET ALIAS",
+        dark: true,
+        cancel: true,
+        persistent: true,
+        prompt: {
+          model: "",
+          type: "text", // optional
+        },
+      }).onOk((data) => {
+        window.myAPI.loginOrg(data);
+      });
+    }
+    function setApi() {
+      console.log($q);
+      $q.dialog({
+        title: "API VERSION",
+        message: "SET API VERSION",
+        dark: true,
+        cancel: true,
+        persistent: true,
+        prompt: {
+          model: "",
+          type: "number", // optional
+        },
+      }).onOk((data) => {
+        localStorage.setItem("API_VERSION", data);
+        appStore.apiVersion = data;
+      });
+    }
     return {
       appStore,
       historyStore,
       xmlStore,
+      dialogLogin,
+      setApi,
     };
   },
   mounted() {
     this.xmlStore.$q = useQuasar();
     this.xmlStore.Notify = Notify;
+    window.myAPI.getAuthList();
+
+    this.appStore.apiVersion = localStorage.getItem("API_VERSION");
   },
   components: {
     XMLViewer,
@@ -100,6 +202,25 @@ export default defineComponent({
     EditType,
   },
   methods: {
+    loadSettings() {
+      if (localStorage.getItem("orgsSetting")) {
+        this.appStore.orgsSetting = JSON.parse(
+          localStorage.getItem("orgsSetting")
+        );
+
+        this.appStore.orgsSetting.forEach((org) => {
+          if (!this.appStore.orgs.includes(org.alias)) {
+            this.appStore.orgs.push(org.alias);
+          }
+        });
+      }
+    },
+
+    logout(data) {
+      console.log(data);
+      window.myAPI.logoutOrg(data);
+    },
+
     minimizeApp() {
       window.myAPI.minimizeApp();
     },

@@ -63,14 +63,35 @@
                 auto-save
                 v-slot="scope"
               >
-                <q-input
+                <!--   <q-input
                   v-model="scope.value"
                   dense
                   autofocus
                   counter
+                  debounce="10"
                   @keyup.enter="scope.set"
-                />
+                  @update="filterFn"
+                ></q-input> -->
+                <q-select
+                  filled
+                  v-model="el['#text']"
+                  use-input
+                  hide-selected
+                  fill-input
+                  input-debounce="100"
+                  :options="options"
+                  @filter="filterFn"
+                >
+                  <template v-slot:no-option>
+                    <q-item>
+                      <q-item-section class="text-grey">
+                        No results
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
               </q-popup-edit>
+
               <q-item-label>{{ el["#text"] }} </q-item-label>
               <q-item-label caption>MEMBER</q-item-label>
             </q-item-section>
@@ -101,18 +122,31 @@
 </template>
 <script>
 import { useXMLViewerStore } from "src/stores/xml_viewer";
-
+import { ref } from "vue";
 export default {
   computed: {},
 
   setup() {
     const XMLViewerStore = useXMLViewerStore();
-
+    const options = ref(XMLViewerStore.metadataRetrieved);
     return {
       XMLViewerStore,
+      options,
+
+      filterFn(val, update, abort) {
+        update(() => {
+          const needle = val.toLowerCase();
+          options.value = XMLViewerStore.metadataRetrieved.filter(
+            (v) => v.toLowerCase().indexOf(needle) > -1
+          );
+        });
+      },
     };
   },
   methods: {},
+  update() {
+    this.XMLViewerStore.SET_METADATA_RETRIEVED();
+  },
 };
 </script>
 <style></style>

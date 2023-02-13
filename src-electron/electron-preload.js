@@ -16,7 +16,7 @@
  *   })
  */
 import { contextBridge, ipcRenderer } from "electron";
-import { Notify } from "quasar";
+
 
 
 contextBridge.exposeInMainWorld("myAPI", {
@@ -39,12 +39,48 @@ contextBridge.exposeInMainWorld("myAPI", {
   savePackage: (value) =>
   {
     ipcRenderer.invoke("save-package", value)
+  },
+
+
+  getAuthList: () =>
+  {
+    ipcRenderer.invoke('auth-list')
+  },
+
+  logoutOrg: (value) =>
+  {
+    ipcRenderer.invoke('logout-org', value);
+  },
+
+  loginOrg: (value) =>
+  {
+    ipcRenderer.invoke('login-org', value);
+  },
+
+
+  retrieveMetadata: async (value) =>
+  {
+    return await ipcRenderer.invoke('retrieve-metadata', value);
   }
 
 });
 
-/* ipcRenderer.on('notify-saved-xml', (e, data) =>
+ipcRenderer.on('auth-list-readed', (e, data) =>
 {
-  console.log('saved not', Notify)
-  Notify.create({ message: 'XML SALVATO: ' + data });
-}) */
+  console.log(data)
+  const _data = JSON.parse(data);
+  if (_data.status == 0)
+  {
+    localStorage.setItem('orgsSetting', JSON.stringify(_data.result))
+  }
+});
+/*
+ipcRenderer.on('mdt-retrieved', (e, data) =>
+{
+  console.log('UPDATE MDT')
+  const _data = JSON.parse(data);
+  if (_data.status == 0)
+  {
+    localStorage.setItem('MDT_TEMP', _data.result);
+  }
+}); */

@@ -320,7 +320,7 @@
   </div>
 </template>
 <script>
-import { XMLParser, XMLBuilder } from "fast-xml-parser";
+import { useAppStore } from "src/stores/app";
 import { useMergeToolStore } from "src/stores/mergeTool";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
 
@@ -363,11 +363,22 @@ export default {
       }
     });
   },
+  updated() {},
   methods: {
-    openAndEditType(data) {
+    async openAndEditType(data) {
       this.dialogModifyType = true;
 
+      console.log(data);
       this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
+
+      localStorage.setItem("MDT_TEMP", []);
+      this.XMLViewerStore.SET_METADATA_RETRIEVED(
+        await window.myAPI.retrieveMetadata({
+          org: this.AppStore.GET_SELECTED_ORG,
+          mdtName: data.node.name["#text"],
+          api: localStorage.getItem("API_VERSION"),
+        })
+      );
     },
 
     savePackage() {
@@ -379,11 +390,13 @@ export default {
     let xmlText = null;
     const XMLViewerStore = useXMLViewerStore();
     const MergeToolStore = useMergeToolStore();
+    const AppStore = useAppStore();
 
     return {
       xmlText,
       XMLViewerStore,
       MergeToolStore,
+      AppStore,
     };
   },
   components: {
