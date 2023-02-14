@@ -78,6 +78,7 @@
                   use-input
                   hide-selected
                   fill-input
+                  :loading="options.length > 0 ? false : true"
                   input-debounce="100"
                   :options="options"
                   @filter="filterFn"

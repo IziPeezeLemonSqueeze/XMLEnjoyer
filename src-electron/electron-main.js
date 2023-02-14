@@ -1,9 +1,9 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, Notification } from "electron";
+import { app, BrowserWindow, ipcMain, nativeTheme, Notification, shell } from "electron";
 import path from "path";
 import os from "os";
 const { dialog } = require('electron')
 const fs = require('fs');
-import { exec } from "child_process";
+import { exec, execSync } from "child_process";
 
 
 import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
@@ -161,27 +161,8 @@ ipcMain.handle("save-package", async (value, ...args) =>
 
 });
 
-function updateOnLogOperation()
-{
-  let _CLI = exec('sfdx force:auth:list --json', {
-    maxBuffer: 1024 * 1024 * 8,
-  });
 
-  let bufferData = '';
-
-  _CLI.stdout.on('data', (chunk) =>
-  {
-    //    console.log('CHUNK', chunk);
-    bufferData += chunk;
-  });
-
-  _CLI.on('exit', (code, signal) =>
-  {
-    mainWindow.webContents.send('auth-list-readed', bufferData);
-  });
-}
-
-ipcMain.handle('auth-list', () =>
+ipcMain.handle('auth-list', async () =>
 {
   /*   let _CLI = exec('sfdx force:auth:list --json', {
       maxBuffer: 1024 * 1024 * 8,
@@ -210,7 +191,15 @@ ipcMain.handle('auth-list', () =>
       mainWindow.webContents.send('auth-list-readed', bufferData);
     }); */
 
-  updateOnLogOperation()
+  const util = require('node:util');
+  const execc = util.promisify(require('node:child_process').exec);
+  const { stdout, stderr } = await execc(
+    'sfdx force:auth:list --json', {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+  let bufferData = stdout;
+
+  return JSON.parse(bufferData);
 
 });
 
@@ -228,22 +217,95 @@ ipcMain.handle('logout-org', (value, ...args) =>
 
   _CLI.on('exit', (code, signal) =>
   {
-    updateOnLogOperation();
+    //updateOnLogOperation();
   });
 });
 
-ipcMain.handle('login-org', (value, ...args) =>
-{
-  console.log('LOGIN ALIAS', args[0])
-  let _CLI = exec('sfdx force:auth:web:login -a ' + args[0], {
-    maxBuffer: 1024 * 1024 * 8,
-    timeout: 10000
-  });
+/**
+ * 'sfdx force:auth:web:login -a '
+      + args[0].alias
+      + ' -r ' + args[0].url
+      + ' --json', {
+      maxBuffer: 1024 * 1024 * 8
+ */
 
-  _CLI.on('exit', (code, signal) =>
+
+
+ipcMain.handle('login-org', async (value, ...args) =>
+{
+  /**
+   * 'sfdx force:auth:web:login -a '
+        + args[0].alias
+        + ' -r ' + args[0].url
+        + ' --json'
+   */
+
+
+  try
   {
-    updateOnLogOperation();
+    let pid = await getPID1717();
+    if (pid != -1)
+    {
+      process.kill(pid);
+    }
+  } catch (err)
+  {
+    console.log(err);
+  }
+
+  const util = require('node:util');
+  const execc = util.promisify(require('node:child_process').exec);
+  const { stdout, stderr } = await execc(
+    'sfdx force:auth:web:login -a '
+    + args[0].alias
+    + ' -r ' + args[0].url
+    + ' --json', {
+    windowsHide: true,
+    maxBuffer: 1024 * 1024 * 8,
+
   });
+  let bufferData = stdout;
+
+  return JSON.parse(bufferData);
+});
+
+async function getPID1717()
+{
+  let spid = -1;
+  const util = require('node:util');
+  const execc = util.promisify(require('node:child_process').exec);
+  const { stdout, stderr } = await execc(
+    'netstat -aon', {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+  let chunk = stdout;
+  let subchuck = chunk.split('\n');
+  subchuck.forEach(ch =>
+  {
+    if (ch.includes(':1717'))
+    {
+      let pid = ch.split(' ')
+      pid = pid.at(-1);
+
+      spid == -1 ? spid = pid : null;
+    }
+  })
+  return spid;
+}
+
+ipcMain.handle('interrupt-login', async (value, ...args) =>
+{
+  try
+  {
+    let pid = await getPID1717();
+    if (pid != -1)
+    {
+      process.kill(pid);
+    }
+  } catch (err)
+  {
+    console.log(err);
+  }
 });
 
 
@@ -259,23 +321,6 @@ ipcMain.handle('retrieve-metadata', async (value, ...args) =>
     maxBuffer: 1024 * 1024 * 8,
   });
   let bufferData = stdout;
-
-  /* _CLI.stdout.on('data', (chunk) =>
-  {
-    //    console.log('CHUNK', chunk);
-    bufferData += chunk;
-  });
-
-  _CLI.stderr.on('data', (data) =>
-  {
-    console.log('ERR', data);
-  });
-
-  _CLI.on('exit', (code, signal) =>
-  {
-    mainWindow.webContents.send('mdt-retrieved', bufferData);
-
-  }); */
 
   return bufferData;
 

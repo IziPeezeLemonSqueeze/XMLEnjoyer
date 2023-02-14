@@ -12,10 +12,40 @@ export const useAppStore = defineStore("app", {
 
     apiVersion: "",
 
+    dialogLogin: false,
+    dialogLoginFirstStep: true,
+
+    alias: '',
+    selectedLoginUrl: '',
+    optionLoginUrl: [
+      { label: 'SANDBOX', value: 'https://test.salesforce.com/', },
+      { label: 'PRODUCTION', value: 'https://login.salesforce.com/' }
+    ]
 
   }),
-  actions: {},
+  actions: {
+
+    UPDATE_AUTHORIZED_ORGS(data)
+    {
+      console.log('data-org', data);
+      if (data.result.length > 0)
+      {
+
+        this.orgsSetting = data.result;
+        data.result.forEach(org =>
+        {
+          if (!this.orgs.includes(org.alias))
+          {
+            this.orgs.push(org.alias);
+          }
+        });
+      }
+    }
+
+  },
   getters: {
-    GET_SELECTED_ORG: (state) => state.selectedOrg
+    GET_SELECTED_ORG: (state) => state.selectedOrg,
+    GET_DIALOG_LOGIN: (state) => state.dialogLogin,
+
   }
 });

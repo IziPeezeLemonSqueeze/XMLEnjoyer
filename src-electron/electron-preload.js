@@ -42,9 +42,9 @@ contextBridge.exposeInMainWorld("myAPI", {
   },
 
 
-  getAuthList: () =>
+  getAuthList: async () =>
   {
-    ipcRenderer.invoke('auth-list')
+    return await ipcRenderer.invoke('auth-list')
   },
 
   logoutOrg: (value) =>
@@ -52,11 +52,15 @@ contextBridge.exposeInMainWorld("myAPI", {
     ipcRenderer.invoke('logout-org', value);
   },
 
-  loginOrg: (value) =>
+  loginOrg: async (value) =>
   {
-    ipcRenderer.invoke('login-org', value);
+    return await ipcRenderer.invoke('login-org', value);
   },
 
+  interruptLogin: () =>
+  {
+    ipcRenderer.invoke('interrupt-login');
+  },
 
   retrieveMetadata: async (value) =>
   {
@@ -65,7 +69,7 @@ contextBridge.exposeInMainWorld("myAPI", {
 
 });
 
-ipcRenderer.on('auth-list-readed', (e, data) =>
+/* ipcRenderer.on('auth-list-readed', (e, data) =>
 {
   console.log(data)
   const _data = JSON.parse(data);
@@ -73,7 +77,7 @@ ipcRenderer.on('auth-list-readed', (e, data) =>
   {
     localStorage.setItem('orgsSetting', JSON.stringify(_data.result))
   }
-});
+}); */
 /*
 ipcRenderer.on('mdt-retrieved', (e, data) =>
 {

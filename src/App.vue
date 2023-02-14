@@ -17,7 +17,7 @@
           label="ORG"
           style="margin-right: 1%"
         />
-        <q-btn dense flat round icon="fa-solid fa-gear" @click="loadSettings">
+        <q-btn dense flat round icon="fa-solid fa-gear">
           <q-menu
             auto-close
             style="width: max-content"
@@ -52,7 +52,9 @@
                   <q-item v-for="(el, ind) in appStore.orgsSetting" :id="ind">
                     <q-item-section>
                       <q-item-label overline>{{ el.alias }}</q-item-label>
-                      <q-item-label>{{ el.username }}</q-item-label>
+                      <q-item-label style="overflow-wrap: break-word">{{
+                        el.username
+                      }}</q-item-label>
                     </q-item-section>
                     <q-item-section avatar>
                       <q-btn
@@ -60,11 +62,18 @@
                         flat
                         color="red-4"
                         icon="fa-solid fa-right-from-bracket"
-                        @click="logout(el.username)"
+                        @click="
+                          logout({ username: el.username, alias: el.alias })
+                        "
                       />
                     </q-item-section>
                   </q-item>
-                  <q-item dense clickable v-ripple @click="dialogLogin">
+                  <q-item
+                    dense
+                    clickable
+                    v-ripple
+                    @click="appStore.dialogLogin = true"
+                  >
                     <q-item-section class="text-bold">
                       AUTHORIZE NEW ORG
                     </q-item-section>
@@ -124,6 +133,7 @@
         <XMLViewer />
         <MergeVue />
         <EditType />
+        <LoginDialog />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -139,6 +149,7 @@ import { useXMLViewerStore } from "./stores/xml_viewer";
 import XMLViewer from "./pages/XMLViewer.vue";
 import MergeVue from "./pages/Merge.vue";
 import EditType from "./pages/EditType.vue";
+import LoginDialog from "./pages/LoginDialog.vue";
 
 export default defineComponent({
   name: "App",
@@ -148,22 +159,6 @@ export default defineComponent({
     const historyStore = useHistoryStore();
     const xmlStore = useXMLViewerStore();
 
-    function dialogLogin() {
-      console.log($q);
-      $q.dialog({
-        title: "NEW ORG CONNECTION",
-        message: "SET ALIAS",
-        dark: true,
-        cancel: true,
-        persistent: true,
-        prompt: {
-          model: "",
-          type: "text", // optional
-        },
-      }).onOk((data) => {
-        window.myAPI.loginOrg(data);
-      });
-    }
     function setApi() {
       console.log($q);
       $q.dialog({
@@ -181,18 +176,19 @@ export default defineComponent({
         appStore.apiVersion = data;
       });
     }
+
     return {
       appStore,
       historyStore,
       xmlStore,
-      dialogLogin,
       setApi,
     };
   },
-  mounted() {
+  async mounted() {
     this.xmlStore.$q = useQuasar();
     this.xmlStore.Notify = Notify;
-    window.myAPI.getAuthList();
+
+    this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
 
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
   },
@@ -200,25 +196,19 @@ export default defineComponent({
     XMLViewer,
     MergeVue,
     EditType,
+    LoginDialog,
   },
   methods: {
-    loadSettings() {
-      if (localStorage.getItem("orgsSetting")) {
-        this.appStore.orgsSetting = JSON.parse(
-          localStorage.getItem("orgsSetting")
-        );
-
-        this.appStore.orgsSetting.forEach((org) => {
-          if (!this.appStore.orgs.includes(org.alias)) {
-            this.appStore.orgs.push(org.alias);
-          }
-        });
-      }
-    },
-
     logout(data) {
       console.log(data);
-      window.myAPI.logoutOrg(data);
+      window.myAPI.logoutOrg(data.username);
+
+      this.appStore.orgs = this.appStore.orgs.filter(
+        (org) => !org.includes(data.alias)
+      );
+      this.appStore.orgsSetting = this.appStore.orgsSetting.filter(
+        (org) => org.alias != data.alias
+      );
     },
 
     minimizeApp() {
