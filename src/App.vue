@@ -19,7 +19,6 @@
         />
         <q-btn dense flat round icon="fa-solid fa-gear">
           <q-menu
-            auto-close
             style="width: max-content"
             transition-show="jump-down"
             transition-hide="jump-up"
@@ -45,9 +44,10 @@
                 />
               </div>
 
-              <q-separator vertical inset class="q-mx-lg" />
+              <q-separator vertical dark inset class="q-mx-lg" />
 
               <div class="column items-center">
+                <div class="text-h6 text-white q-mb-md">ORG AVAILABLE</div>
                 <q-list dark bordered separator style="max-width: 318px">
                   <q-item v-for="(el, ind) in appStore.orgsSetting" :id="ind">
                     <q-item-section>
@@ -160,7 +160,7 @@ export default defineComponent({
     const xmlStore = useXMLViewerStore();
 
     function setApi() {
-      console.log($q);
+      //console.log($q);
       $q.dialog({
         title: "API VERSION",
         message: "SET API VERSION",
@@ -191,6 +191,22 @@ export default defineComponent({
     this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
 
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
+
+    if (!this.appStore.selectedOrg) {
+      Notify.create({
+        message: "NO ORG SELECTED - NO AUTOCOMPLETE TYPES AVAILABLE ",
+        color: "orange",
+        timeout: 20000,
+        position: "bottom",
+        textColor: "black",
+        actions: [
+          {
+            label: "CLOSE",
+            handler: () => {},
+          },
+        ],
+      });
+    }
   },
   components: {
     XMLViewer,
@@ -200,7 +216,7 @@ export default defineComponent({
   },
   methods: {
     logout(data) {
-      console.log(data);
+      //console.log(data);
       window.myAPI.logoutOrg(data.username);
 
       this.appStore.orgs = this.appStore.orgs.filter(

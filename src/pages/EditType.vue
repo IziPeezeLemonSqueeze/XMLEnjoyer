@@ -57,10 +57,9 @@
             </q-item-section>
             <q-item-section>
               <q-popup-edit
-                buttons
+                :auto-save="false"
                 style="width: 20%"
                 v-model="XMLViewerStore.nodeOnModify.members[index]['#text']"
-                auto-save
                 v-slot="scope"
               >
                 <!--   <q-input
@@ -100,19 +99,36 @@
         </q-list>
         <q-item-label style="margin-top: 4%">
           <q-popup-edit
-            buttons
+            :auto-save="false"
             style="width: 20%"
             v-model="XMLViewerStore.nodeOnModify.name['#text']"
-            auto-save
             v-slot="scope"
           >
-            <q-input
+            <!--             <q-input
               v-model="scope.value"
               dense
               autofocus
               counter
               @keyup.enter="scope.set"
-            />
+            /> -->
+            <q-select
+              filled
+              v-model="XMLViewerStore.nodeOnModify.name['#text']"
+              use-input
+              hide-selected
+              fill-input
+              input-debounce="100"
+              :options="optionsMDTList"
+              @filter="filterFnMDTList"
+            >
+              <template v-slot:no-option>
+                <q-item>
+                  <q-item-section class="text-grey">
+                    No results
+                  </q-item-section>
+                </q-item>
+              </template>
+            </q-select>
           </q-popup-edit>
           {{ XMLViewerStore.nodeOnModify.name["#text"] }}
         </q-item-label>
@@ -130,14 +146,25 @@ export default {
   setup() {
     const XMLViewerStore = useXMLViewerStore();
     const options = ref(XMLViewerStore.metadataRetrieved);
+    const optionsMDTList = ref(XMLViewerStore.metadataList);
     return {
       XMLViewerStore,
       options,
+      optionsMDTList,
 
       filterFn(val, update, abort) {
         update(() => {
           const needle = val.toLowerCase();
           options.value = XMLViewerStore.metadataRetrieved.filter(
+            (v) => v.toLowerCase().indexOf(needle) > -1
+          );
+        });
+      },
+
+      filterFnMDTList(val, update, abort) {
+        update(() => {
+          const needle = val.toLowerCase();
+          optionsMDTList.value = XMLViewerStore.metadataList.filter(
             (v) => v.toLowerCase().indexOf(needle) > -1
           );
         });

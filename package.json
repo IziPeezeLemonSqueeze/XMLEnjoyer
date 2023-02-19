@@ -1,13 +1,14 @@
 {
   "name": "xmlenjoyer",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "Salesforce package xml tools ",
   "productName": "XmlEnjoyer",
   "author": "Stefano Pastore @ NTTDATA",
   "private": true,
   "scripts": {
     "test": "echo \"No test specified\" && exit 0",
-    "dev": "quasar dev -m electron"
+    "dev": "quasar dev -m electron",
+    "build": "quasar build -m electron"
   },
   "dependencies": {
     "@quasar/extras": "^1.0.0",

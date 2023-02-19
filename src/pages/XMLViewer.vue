@@ -326,8 +326,25 @@ import { useXMLViewerStore } from "src/stores/xml_viewer";
 
 import { VueDraggableNext } from "vue-draggable-next";
 
+import { useQuasar, Notify } from "quasar";
+
 export default {
   name: "XMLVIEWER",
+  setup() {
+    let xmlText = null;
+    const $q = useQuasar();
+    const XMLViewerStore = useXMLViewerStore();
+    const MergeToolStore = useMergeToolStore();
+    const AppStore = useAppStore();
+
+    return {
+      xmlText,
+      XMLViewerStore,
+      MergeToolStore,
+      AppStore,
+      Notify,
+    };
+  },
   computed: {
     dialogMerge: {
       get() {
@@ -348,7 +365,7 @@ export default {
     file: {
       get() {},
       set(data) {
-        console.log(data);
+        //console.log(data);
         this.XMLViewerStore.SET_FILE(data);
       },
     },
@@ -357,7 +374,7 @@ export default {
     this.XMLViewerStore.$subscribe((mutation, state) => {
       switch (mutation.events.key) {
         case "parsedFile":
-          console.log(mutation.events.newValue);
+          //console.log(mutation.events.newValue);
 
           break;
       }
@@ -366,9 +383,25 @@ export default {
   updated() {},
   methods: {
     async openAndEditType(data) {
+      if (this.AppStore.selectedOrg == null) {
+        this.Notify.create({
+          message: "NO ORG SELECTED - NO AUTOCOMPLETE TYPES AVAILABLE ",
+          color: "orange",
+          timeout: 20000,
+          position: "bottom",
+          textColor: "black",
+          actions: [
+            {
+              label: "CLOSE",
+              handler: () => {},
+            },
+          ],
+        });
+      }
+
       this.dialogModifyType = true;
 
-      console.log(data);
+      //console.log(data);
       this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
 
       localStorage.setItem("MDT_TEMP", []);
@@ -385,19 +418,6 @@ export default {
       let xml = this.MergeToolStore.EXPORT_XML();
       window.myAPI.savePackage(xml);
     },
-  },
-  setup() {
-    let xmlText = null;
-    const XMLViewerStore = useXMLViewerStore();
-    const MergeToolStore = useMergeToolStore();
-    const AppStore = useAppStore();
-
-    return {
-      xmlText,
-      XMLViewerStore,
-      MergeToolStore,
-      AppStore,
-    };
   },
   components: {
     draggable: VueDraggableNext,

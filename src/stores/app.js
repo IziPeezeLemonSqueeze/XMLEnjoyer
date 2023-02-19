@@ -27,7 +27,7 @@ export const useAppStore = defineStore("app", {
 
     UPDATE_AUTHORIZED_ORGS(data)
     {
-      console.log('data-org', data);
+      //console.log('data-org', data);
       if (data.result.length > 0)
       {
 

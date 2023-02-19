@@ -76,7 +76,7 @@ function createWindow()
 
 app.whenReady().then((ready) =>
 {
-  console.log(ready);
+  //console.log(ready);
 
   createWindow();
 
@@ -123,7 +123,7 @@ ipcMain.handle("max-app", () =>
 
 ipcMain.handle("save-package", async (value, ...args) =>
 {
-  console.log(value, args[0])
+  //console.log(value, args[0])
   dialog.showSaveDialog({
     title: 'Select the File Path to save',
     defaultPath: path.join(__dirname, '../../../package'),
@@ -139,17 +139,17 @@ ipcMain.handle("save-package", async (value, ...args) =>
   }).then(file =>
   {
     // Stating whether dialog operation was cancelled or not.
-    console.log(file.canceled);
+    //console.log(file.canceled);
     if (!file.canceled)
     {
-      console.log(file.filePath.toString());
+      //console.log(file.filePath.toString());
 
       // Creating and Writing to the sample.txt file
       fs.writeFile(file.filePath.toString(),
         args[0], function (err)
       {
         if (err) throw err;
-        console.log('Saved!');
+        //console.log('Saved!');
         //mainWindow.webContents.send('notify-saved-xml', file.filePath.toString());
         new Notification({ title: 'XMLEnjoyer', body: 'XML Package salvato:\n' + file.filePath.toString() }).show();
       });
@@ -321,7 +321,6 @@ ipcMain.handle('retrieve-metadata', async (value, ...args) =>
     maxBuffer: 1024 * 1024 * 8,
   });
   let bufferData = stdout;
-
   return bufferData;
 
 })

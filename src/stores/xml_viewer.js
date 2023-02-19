@@ -8,6 +8,155 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     parsedFile: [],
     historyStore: useHistoryStore(),
 
+    metadataList: [
+      "AccountRelationshipShareRule",
+      "ActionLinkGroupTemplate",
+      "ApexClass",
+      "ApexComponent",
+      "ApexPage",
+      "ApexTrigger",
+      "AppMenu",
+      "ApprovalProcess",
+      "ArticleType",
+      "AssignmentRules",
+      "Audience",
+      "AuthProvider",
+      "AuraDefinitionBundle",
+      "AutoResponseRules",
+      "Bot",
+      "BrandingSet",
+      "CallCenter",
+      "Certificate",
+      "CleanDataService",
+      "CMSConnectSource",
+      "Community",
+      "CommunityTemplateDefinition",
+      "CommunityThemeDefinition",
+      "CompactLayout",
+      "ConnectedApp",
+      "ContentAsset",
+      "CorsWhitelistOrigin",
+      "CustomApplication",
+      "CustomApplicationComponent",
+      "CustomFeedFilter",
+      "CustomField",
+      "CustomHelpMenuSection",
+      "CustomMetadata",
+      "CustomLabels",
+      "CustomObjectTranslation",
+      "CustomPageWebLink",
+      "CustomPermission",
+      "CustomSite",
+      "CustomTab",
+      "DataCategoryGroup",
+      "DelegateGroup",
+      "DuplicateRule",
+      "EclairGeoData",
+      "EntitlementProcess",
+      "EntitlementTemplate",
+      "EventDelivery",
+      "EventSubscription",
+      "ExternalServiceRegistration",
+      "ExternalDataSource",
+      "FeatureParameterBoolean",
+      "FeatureParameterDate",
+      "FeatureParameterInteger",
+      "FieldSet",
+      "FlexiPage",
+      "Flow",
+      "FlowCategory",
+      "FlowDefinition",
+      "GlobalValueSet",
+      "GlobalValueSetTranslation",
+      "Group",
+      "HomePageComponent",
+      "HomePageLayout",
+      "InstalledPackage",
+      "KeywordList",
+      "Layout",
+      "LightningBolt",
+      "LightningComponentBundle",
+      "LightningExperienceTheme",
+      "LiveChatAgentConfig",
+      "LiveChatButton",
+      "LiveChatDeployment",
+      "LiveChatSensitiveDataRule",
+      "ManagedTopics",
+      "MatchingRules",
+      "MilestoneType",
+      "MlDomain",
+      "ModerationRule",
+      "NamedCredential",
+      "Network",
+      "NetworkBranding",
+      "PathAssistant",
+      "PermissionSet",
+      "PlatformCachePartition",
+      "Portal",
+      "PostTemplate",
+      "PresenceDeclineReason",
+      "PresenceUserConfig",
+      "Profile",
+      "ProfilePasswordPolicy",
+      "ProfileSessionSetting",
+      "Queue",
+      "QueueRoutingConfig",
+      "QuickAction",
+      "RecommendationStrategy",
+      "RecordActionDeployment",
+      "ReportType",
+      "Role",
+      "SamlSsoConfig",
+      "Scontrol",
+      "ServiceChannel",
+      "ServicePresenceStatus",
+      "SharingRules",
+      "SharingSet",
+      "SiteDotCom",
+      "Skill",
+      "StandardValueSetTranslation",
+      "StaticResource",
+      "SynonymDictionary",
+      "Territory",
+      "Territory2",
+      "Territory2Model",
+      "Territory2Rule",
+      "Territory2Type",
+      "TopicsForObjects",
+      "TransactionSecurityPolicy",
+      "Translations",
+      "WaveApplication",
+      "WaveDashboard",
+      "WaveDataflow",
+      "WaveDataset",
+      "WaveLens",
+      "WaveTemplateBundle",
+      "WaveXmd",
+      "Workflow",
+      "ActionPlanTemplate",
+      "AnimationRule",
+      "ChannelLayout",
+      "ApexTestSuite",
+      "AppointmentSchedulingPolicy",
+      "CampaignInfluenceModel",
+      "ChatterExtension",
+      "CspTrustedSite",
+      "CompactLayout",
+      "ExperienceBundle",
+      "LightningMessageChannel",
+      "MyDomainDiscoverableLogin",
+      "NavigationMenu",
+      "OauthCustomScope",
+      "PaymentGatewayProvider",
+      "PlatformEventChannel",
+      "PlatformEventChannelMember",
+      "Prompt",
+      "RedirectWhitelistUrl",
+      "Settings",
+      "TimeSheetTemplate",
+      "WaveRecipe",
+      "WorkSkillRouting",
+    ],
 
     dialogMerge: false,
 
@@ -20,7 +169,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     Notify: null,
 
     metadataRetrieved: [],
-
   }),
   getters: {
     GET_TEXT_FILE: (state) => state.textFile,
@@ -30,7 +178,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     GET_DIALOG_MERGE_HIDE: (state) => state.dialogMerge,
 
     GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType,
-
   },
   actions: {
     SET_HOVER(data)
@@ -64,7 +211,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       const fr = new FileReader();
       fr.onloadend = async (end) =>
       {
-
         let parser = new XMLParser({
           alwaysCreateTextNode: true,
           ignoreAttributes: false,
@@ -76,10 +222,12 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
             //console.log(name, jpath, isLeafNode, isAttribute)
             switch (name)
             {
-              case 'members': return true;
-              default: return false;
+              case "members":
+                return true;
+              default:
+                return false;
             }
-          }
+          },
         });
 
         let pf = {
@@ -123,12 +271,12 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         }
       });
 
-      this.selectedXML = this.selectedXML.filter(xml => xml != data);
+      this.selectedXML = this.selectedXML.filter((xml) => xml != data);
     },
 
     GET_CHECKED_XML()
     {
-      console.log('CHECKED CHECK')
+      console.log("CHECKED CHECK");
       this.parsedFile.forEach((el, ind) =>
       {
         if (this.selectedXML.includes(el.uuid))
@@ -141,29 +289,29 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         {
           if (el.checked)
           {
-            this.selectedXML.push(el.uuid)
+            this.selectedXML.push(el.uuid);
           }
         }
       });
-
     },
 
     ADD_TYPE_ON_XML(data)
     {
       this.parsedFile[data.index].parsed["Package"]["types"].push({
         members: [],
-        name: { '#text': data.name }
-      })
+        name: { "#text": data.name },
+      });
       this.Notify.create({
-        message: 'Aggiunto un nuovo TYPES a XML: ' + this.parsedFile[data.index].index,
-        color: 'green',
+        message:
+          "Aggiunto un nuovo TYPES a XML: " + this.parsedFile[data.index].index,
+        color: "green",
         timeout: 3000,
       });
     },
 
     SET_TYPE_ON_MODIFY(data)
     {
-      console.log(data.node)
+      console.log(data.node);
       this.nodeOnModify.indexSelected = data.parsedFileIndex;
       this.nodeOnModify.indexNodeSelected = data.parsedFileNodeIndex;
       this.nodeOnModify.members = data.node.members;
@@ -177,7 +325,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_TYPE_FROM_ONMODIFY()
     {
-
       this.nodeOnModify.members.push({ "#text": "" });
     },
 
@@ -185,64 +332,81 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     {
       this.nodeOnModify.members.sort((a, b) =>
       {
-        if (a['#text'] < b['#text'])
+        if (a["#text"] < b["#text"])
         {
-          return -1
+          return -1;
         }
-        if (a['#text'] > b['#text'])
+        if (a["#text"] > b["#text"])
         {
-          return 1
+          return 1;
         }
-        return 0
+        return 0;
       });
     },
 
     SORT_TYPES_AND_MEMBERS(data)
     {
-      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].sort((a, b) =>
-      {
-        let aa = a.name, bb = b.name;
-        if (aa['#text'] < bb['#text'])
+      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].sort(
+        (a, b) =>
         {
-          return -1
-        }
-        if (aa['#text'] > bb['#text'])
-        {
-          return 1
-        }
-        return 0
-      });
-
-      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].forEach((n) =>
-      {
-        let mem = n.members;
-
-        mem.sort((a, b) =>
-        {
-          if (a['#text'] < b['#text'])
+          let aa = a.name,
+            bb = b.name;
+          if (aa["#text"] < bb["#text"])
           {
-            return -1
+            return -1;
           }
-          if (a['#text'] > b['#text'])
+          if (aa["#text"] > bb["#text"])
           {
-            return 1
+            return 1;
           }
-          return 0
-        });
-        n.members = mem;
-      });
+          return 0;
+        }
+      );
 
+      this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].forEach(
+        (n) =>
+        {
+          let mem = n.members;
+
+          mem.sort((a, b) =>
+          {
+            if (a["#text"] < b["#text"])
+            {
+              return -1;
+            }
+            if (a["#text"] > b["#text"])
+            {
+              return 1;
+            }
+            return 0;
+          });
+          n.members = mem;
+        }
+      );
     },
 
     SET_METADATA_RETRIEVED(data)
     {
       this.metadataRetrieved = [];
       let ret = JSON.parse(data);
-      console.log(ret)
-      ret.result.forEach(mdt =>
+
+      ret.result.forEach((mdt) =>
       {
+
+        if (mdt.fullName.includes('%28'))
+        {
+          mdt.fullName = mdt.fullName.replace('%28', '(');
+        }
+        if (mdt.fullName.includes('%29'))
+        {
+          mdt.fullName = mdt.fullName.replace('%29', ')');
+        }
+        if (mdt.fullName.includes('%26'))
+        {
+          mdt.fullName = mdt.fullName.replace('%26', '&');
+        }
         this.metadataRetrieved.push(mdt.fullName);
       });
-    }
+    },
   },
 });

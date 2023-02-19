@@ -104,13 +104,13 @@ export default {
         alias: this.AppStore.alias,
         url: this.AppStore.selectedLoginUrl,
       });
-      console.log(loginResult);
+      //console.log(loginResult);
       if (loginResult.status == 0) {
         const orgAuthActive = await window.myAPI.getAuthList();
 
         this.AppStore.UPDATE_AUTHORIZED_ORGS(orgAuthActive);
       } else {
-        console.log("LOGIN NOT 0", loginResult);
+        //console.log("LOGIN NOT 0", loginResult);
       }
 
       this.AppStore.alias = "";
