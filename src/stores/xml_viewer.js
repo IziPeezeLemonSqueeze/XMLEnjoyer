@@ -224,6 +224,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
             {
               case "members":
                 return true;
+              case "types":
+                return true;
               default:
                 return false;
             }
