@@ -407,6 +407,13 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         {
           mdt.fullName = mdt.fullName.replace('%26', '&');
         }
+
+        console.log(mdt.type, mdt.manageableState, mdt.namespacePrefix)
+        if (mdt.type == 'Layout' && mdt.manageableState == 'installed')
+        {
+          mdt.fullName = mdt.fullName.replace('-', '-' + mdt.namespacePrefix + '__');
+        }
+
         this.metadataRetrieved.push(mdt.fullName);
       });
     },
