@@ -44,6 +44,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       "CustomMetadata",
       "CustomLabels",
       "CustomObjectTranslation",
+      "CustomObject",
       "CustomPageWebLink",
       "CustomPermission",
       "CustomSite",
