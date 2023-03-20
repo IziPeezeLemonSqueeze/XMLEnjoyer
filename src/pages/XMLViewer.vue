@@ -325,7 +325,7 @@ import { useMergeToolStore } from "src/stores/mergeTool";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
 
 import { VueDraggableNext } from "vue-draggable-next";
-
+import { useClipboard, usePermission } from "@vueuse/core";
 import { useQuasar, Notify } from "quasar";
 
 export default {
@@ -337,12 +337,21 @@ export default {
     const MergeToolStore = useMergeToolStore();
     const AppStore = useAppStore();
 
+    const { text, isSupported, copy } = useClipboard();
+    const permissionRead = usePermission("clipboard-read");
+    const permissionWrite = usePermission("clipboard-write");
+
     return {
       xmlText,
       XMLViewerStore,
       MergeToolStore,
       AppStore,
       Notify,
+      text,
+      copy,
+      permissionRead,
+      permissionWrite,
+      isSupported,
     };
   },
   computed: {
@@ -379,6 +388,41 @@ export default {
           break;
       }
     });
+
+    this._keyListener = async function (e) {
+      if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault(); // present "Save Page" from getting triggered.
+
+        this.text = await window.myAPI.getExternalClipboard();
+        console.log("EXTERNAL CLIP", this.text);
+        this.XMLViewerStore.SET_FILE(this.text);
+        console.log("CONTROL V");
+        /*        console.log(
+          "CTRLV",
+          this.text,
+          this.permissionRead,
+          this.permissionRead,
+          this.isSupported
+        ); */
+      } else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault(); // present "Save Page" from getting triggered.
+
+        this.copy(this.MergeToolStore.EXPORT_XML());
+        /*       console.log(
+          "CTRLC",
+          this.text,
+          this.permissionRead,
+          this.permissionRead,
+          this.isSupported,
+          this.MergeToolStore.EXPORT_XML()
+        ); */
+      }
+    };
+
+    document.addEventListener("keydown", this._keyListener.bind(this));
+  },
+  beforeDestroy() {
+    document.removeEventListener("keydown", this._keyListener);
   },
   updated() {},
   methods: {

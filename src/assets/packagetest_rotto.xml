@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Package
+	xmlns="">
+	<types>
+		<members>Differenziazione_prodotto_Prescoring__mdt.ConsumoMax__c</members>
+		<members>Differenziazione_prodotto_Prescoring__mdt.ConsumoMin__c</members>
+		<members>Differenziazione_prodotto_Prescoring__mdt.isPartnerCommunity__c</members>
+		<name>CustomField</name>
+	</types>
+	<version>55.0</version>
+</Package>

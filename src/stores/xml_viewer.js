@@ -209,58 +209,98 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     SET_FILE(data)
     {
+      console.log('DATA FROM FILE', data);
       const fr = new FileReader();
       fr.onloadend = async (end) =>
       {
-        let parser = new XMLParser({
-          alwaysCreateTextNode: true,
-          ignoreAttributes: false,
-          ignoreDeclaration: false,
-          parseAttributeValue: false,
-          commentPropName: "#comment",
-          isArray: (name, jpath, isLeafNode, isAttribute) =>
-          {
-            //console.log(name, jpath, isLeafNode, isAttribute)
-            switch (name)
-            {
-              case "members":
-                return true;
-              case "types":
-                return true;
-              default:
-                return false;
-            }
-          },
-        });
-
-        let pf = {
-          uuid: crypto.randomUUID(),
-          closing: false,
-          checked: false,
-          openInfo: false,
-          hover: false,
-          index: this.parsedFile.length + 1,
-          nameFile: data.name,
-          pathFile: data.path,
-          text: end.target.result,
-          parsed: parser.parse(end.target.result),
-        };
-
-        // pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
-
-        this.parsedFile.push(pf);
-
-        this.historyStore.ADD_TO_HISTORY({
-          action: "add",
-          name: pf.nameFile,
-          path: pf.pathFile,
-          uuid: pf.uuid,
-        });
-        /*   const builder = new XMLBuilder();
-        const xmlContent = builder.build(this.XMLViewerStore.parsedFile);
-        console.dir(xmlContent); */
+        this._CREATE_XML({ data: data, end: end });
       };
-      fr.readAsText(data);
+
+      if (!data.name)
+      {
+        if (!data.includes('<Package') ||
+          !data.includes('xmlns="http://soap.sforce.com'))
+        {
+          this.Notify.create({
+            message:
+              "XML NON VALIDO!",
+            color: "red",
+            timeout: 3000,
+          });
+          return;
+        }
+        this._CREATE_XML({
+          data:
+          {
+            name: 'FROM_CLIPBOARD' + crypto.randomUUID(),
+            path: null
+          },
+          end: { target: { result: data } }
+        });
+      } else
+      {
+        fr.readAsText(data);
+        console.log('FILE');
+      }
+    },
+
+    _CREATE_XML(data)
+    {
+      console.log(data);
+      let parser = new XMLParser({
+        alwaysCreateTextNode: true,
+        ignoreAttributes: false,
+        ignoreDeclaration: false,
+        parseAttributeValue: false,
+        commentPropName: "#comment",
+        isArray: (name, jpath, isLeafNode, isAttribute) =>
+        {
+          //console.log(name, jpath, isLeafNode, isAttribute)
+          switch (name)
+          {
+            case "members":
+              return true;
+            case "types":
+              return true;
+            default:
+              return false;
+          }
+        },
+      });
+
+      let pf = {
+        uuid: crypto.randomUUID(),
+        closing: false,
+        checked: false,
+        openInfo: false,
+        hover: false,
+        index: this.parsedFile.length + 1,
+        nameFile: data.data.name,
+        pathFile: data.data.path,
+        text: data.end.target.result,
+        parsed: parser.parse(data.end.target.result),
+      };
+
+      // pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
+      if (!pf.text.includes('<Package') ||
+        !pf.text.includes('soap.sforce.com'))
+      {
+        this.Notify.create({
+          message:
+            "XML NON VALIDO!",
+          color: "red",
+          timeout: 3000,
+        });
+        return;
+      }
+      this.parsedFile.push(pf);
+
+      this.historyStore.ADD_TO_HISTORY({
+        action: "add",
+        name: pf.nameFile,
+        path: pf.pathFile,
+        uuid: pf.uuid,
+      });
     },
 
     DELETE_XML(data)

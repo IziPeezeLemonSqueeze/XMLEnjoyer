@@ -65,7 +65,13 @@ contextBridge.exposeInMainWorld("myAPI", {
   retrieveMetadata: async (value) =>
   {
     return await ipcRenderer.invoke('retrieve-metadata', value);
+  },
+
+  getExternalClipboard: async () =>
+  {
+    return await ipcRenderer.invoke('get-clipboard');
   }
+
 
 });
 

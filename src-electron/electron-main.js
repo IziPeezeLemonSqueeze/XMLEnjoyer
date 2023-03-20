@@ -1,4 +1,4 @@
-import { app, BrowserWindow, ipcMain, nativeTheme, Notification, shell } from "electron";
+import { app, BrowserWindow, ipcMain, nativeTheme, Notification, shell, clipboard } from "electron";
 import path from "path";
 import os from "os";
 const { dialog } = require('electron')
@@ -323,4 +323,14 @@ ipcMain.handle('retrieve-metadata', async (value, ...args) =>
   let bufferData = stdout;
   return bufferData;
 
-})
+});
+
+ipcMain.handle('get-clipboard', async (value, ...args) =>
+{
+  const text = clipboard.readText();
+  if (text.length > 0 || text)
+  {
+    return text;
+  }
+  clipboard.clear();
+});
