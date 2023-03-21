@@ -11,10 +11,6 @@
         accept=".xml"
         :disable="XMLViewerStore.parsedFile.length >= 10"
       />
-      <q-item-label class="text-white q-pa-sm" style="align-self: center">
-        XML attivi :
-        {{ XMLViewerStore.parsedFile.length + "/ 10" }}
-      </q-item-label>
       <q-space />
       <q-btn
         dark
@@ -406,8 +402,8 @@ export default {
         ); */
       } else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault(); // present "Save Page" from getting triggered.
-
         this.copy(this.MergeToolStore.EXPORT_XML());
+        console.log("CONTROL C");
         /*       console.log(
           "CTRLC",
           this.text,

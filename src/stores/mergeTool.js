@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { useXMLViewerStore } from "./xml_viewer";
 
 import { XMLValidator, XMLBuilder } from "fast-xml-parser";
+import { Notify } from "quasar";
 
 export const useMergeToolStore = defineStore("merge_tool", {
   state: () => ({
@@ -16,7 +17,8 @@ export const useMergeToolStore = defineStore("merge_tool", {
 
     merging: false,
 
-
+    $q: null,
+    Notify: null,
 
   }),
   actions: {
@@ -100,11 +102,40 @@ export const useMergeToolStore = defineStore("merge_tool", {
         ignoreAttributes: false,
       });
 
+      if (this.XMLViewerStore.selectedXML.length == 1)
+      {
+        try
+        {
+          const selected = this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0];
 
-      return builder.build(
-        this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0].parsed/* .Package.types  */
-      )
-
+          if (selected || selected == undefined)
+          {
+            this.Notify.create({
+              message:
+                "XML IN EXPORT: " + selected.index,
+              color: "green",
+              timeout: 3000,
+            });
+            return builder.build(selected.parsed);
+          }
+        } catch (e)
+        {
+          this.Notify.create({
+            message:
+              "PER EXPORT SELEZIONARNE ALMENO UNO",
+            color: "orange",
+            timeout: 3000,
+          });
+        }
+      } else
+      {
+        this.Notify.create({
+          message:
+            "EXPORT NON POSSIBILE, TROPPE SELEZIONI",
+          color: "orange",
+          timeout: 3000,
+        });
+      }
 
     },
 

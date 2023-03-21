@@ -319,21 +319,14 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     GET_CHECKED_XML()
     {
-      console.log("CHECKED CHECK");
       this.parsedFile.forEach((el, ind) =>
       {
-        if (this.selectedXML.includes(el.uuid))
+        if (el.checked)
         {
-          if (!el.checked)
-          {
-            this.selectedXML.splice(ind, 1);
-          }
+          !this.selectedXML.includes(el.uuid) ? this.selectedXML.push(el.uuid) : null;
         } else
         {
-          if (el.checked)
-          {
-            this.selectedXML.push(el.uuid);
-          }
+          this.selectedXML.includes(el.uuid) ? this.selectedXML.splice(this.selectedXML.indexOf(el.uuid), 1) : null;
         }
       });
     },
