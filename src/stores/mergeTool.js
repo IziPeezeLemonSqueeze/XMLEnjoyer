@@ -13,7 +13,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
     reorderOnFinalXml: false,
     progress: false,
 
-    labelProgress: '',
+    labelProgress: 'IN ATTESA',
 
     merging: false,
 
@@ -91,7 +91,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
 
       this.XMLViewerStore.parsedFile.push(finalXml)
       this.XMLViewerStore.selectedXML.push(finalXml.uuid)
-      this.labelProgress = 'COMPLETE';
+      this.labelProgress = 'COMPLETATO';
 
     },
 
@@ -100,6 +100,8 @@ export const useMergeToolStore = defineStore("merge_tool", {
       const builder = new XMLBuilder({
         format: true,
         ignoreAttributes: false,
+        suppressEmptyNode: true,
+        suppressUnpairedNode: true
       });
 
       if (this.XMLViewerStore.selectedXML.length == 1)
@@ -107,6 +109,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
         try
         {
           const selected = this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0];
+          const lastComment = selected.parsed['#comment']['#text'];
 
           if (selected || selected == undefined)
           {
@@ -116,22 +119,36 @@ export const useMergeToolStore = defineStore("merge_tool", {
               color: "green",
               timeout: 3000,
             });
-            return builder.build(selected.parsed);
+            delete selected.parsed['#comment'];
+            let builded = builder.build(selected.parsed);
+            selected.parsed['#comment'] = { '#text': lastComment };
+            builded += '<!-- ' + lastComment + ' -->';
+
+            return builded;
           }
         } catch (e)
         {
           this.Notify.create({
             message:
-              "PER EXPORT SELEZIONARNE ALMENO UNO",
+              "ERRORE EXPORT " + e,
             color: "orange",
             timeout: 3000,
           });
         }
-      } else
+      } else if (this.XMLViewerStore.selectedXML.length > 1)
       {
         this.Notify.create({
           message:
             "EXPORT NON POSSIBILE, TROPPE SELEZIONI",
+          color: "orange",
+          timeout: 3000,
+        });
+
+      } else
+      {
+        this.Notify.create({
+          message:
+            "PER EXPORT SELEZIONARE ALMENO UN XML",
           color: "orange",
           timeout: 3000,
         });

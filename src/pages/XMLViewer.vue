@@ -4,7 +4,7 @@
       <q-file
         dark
         color="white"
-        style="max-width: 300px"
+        style="width: 300px"
         v-model="file"
         outlined
         label="Carica/Trascina File XML"
@@ -322,7 +322,7 @@ import { useXMLViewerStore } from "src/stores/xml_viewer";
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { useClipboard, usePermission } from "@vueuse/core";
-import { useQuasar, Notify } from "quasar";
+import { useQuasar, Notify, QSpinnerGrid } from "quasar";
 
 export default {
   name: "XMLVIEWER",
@@ -427,7 +427,7 @@ export default {
         this.Notify.create({
           message: "NO ORG SELECTED - NO AUTOCOMPLETE TYPES AVAILABLE ",
           color: "orange",
-          timeout: 20000,
+          timeout: 0,
           position: "bottom",
           textColor: "black",
           actions: [
@@ -437,21 +437,55 @@ export default {
             },
           ],
         });
+      } else {
+        let notifyDismiss = this.Notify.create({
+          message: "Scarico Metadata dalla ORG...",
+          color: "blue",
+          timeout: 0,
+          position: "bottom",
+          textColor: "white",
+          spinner: QSpinnerGrid,
+        });
+
+        //localStorage.setItem("MDT_TEMP", []);
+        if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
+          this.XMLViewerStore.lastMetadataRetrievied = null;
+          this.AppStore.SET_PAIR_ORG();
+        }
+        if (
+          data.node.name["#text"] != this.XMLViewerStore.lastMetadataRetrievied
+        ) {
+          this.XMLViewerStore.lastMetadataRetrievied = data.node.name["#text"];
+          this.XMLViewerStore.SET_METADATA_RETRIEVED(
+            await window.myAPI.retrieveMetadata({
+              org: this.AppStore.GET_SELECTED_ORG,
+              mdtName: data.node.name["#text"],
+              api: localStorage.getItem("API_VERSION"),
+            })
+          );
+        }
+
+        notifyDismiss();
       }
 
       this.dialogModifyType = true;
 
       //console.log(data);
       this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
-
-      localStorage.setItem("MDT_TEMP", []);
-      this.XMLViewerStore.SET_METADATA_RETRIEVED(
-        await window.myAPI.retrieveMetadata({
-          org: this.AppStore.GET_SELECTED_ORG,
-          mdtName: data.node.name["#text"],
-          api: localStorage.getItem("API_VERSION"),
-        })
-      );
+      const nowDate = new Date();
+      this.XMLViewerStore.UPDATE_LASTMODIFIED_ON_XML({
+        idx: data.parsedFileIndex,
+        info:
+          this.AppStore.nameOperator +
+          " " +
+          nowDate.getDate() +
+          "/" +
+          (nowDate.getMonth() + 1 < 10
+            ? "0" + (nowDate.getMonth() + 1)
+            : nowDate.getMonth() + 1) +
+          "/" +
+          nowDate.getFullYear(),
+      });
     },
 
     savePackage() {

@@ -8,9 +8,11 @@ export const useAppStore = defineStore("app", {
 
     orgs: [],
     orgsSetting: [],
+    lastActiveOrg: null,
     selectedOrg: null,
 
     apiVersion: "",
+    nameOperator: "",
 
     dialogLogin: false,
     dialogLoginFirstStep: true,
@@ -40,6 +42,11 @@ export const useAppStore = defineStore("app", {
           }
         });
       }
+    },
+
+    SET_PAIR_ORG()
+    {
+      this.lastActiveOrg = this.selectedOrg;
     }
 
   },

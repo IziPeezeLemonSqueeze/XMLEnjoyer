@@ -169,6 +169,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     $q: null,
     Notify: null,
 
+    lastMetadataRetrievied: null,
     metadataRetrieved: [],
   }),
   getters: {
@@ -310,10 +311,10 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         if (el.uuid === data)
         {
           this.parsedFile.splice(index, 1);
-          this.historyStore.history.splice(index, 1);
         }
       });
 
+      this.historyStore.history = this.historyStore.history.filter((xml) => xml.uuid != data)
       this.selectedXML = this.selectedXML.filter((xml) => xml != data);
     },
 
@@ -347,7 +348,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     SET_TYPE_ON_MODIFY(data)
     {
-      console.log(data.node);
+      console.log(data);
       this.nodeOnModify.indexSelected = data.parsedFileIndex;
       this.nodeOnModify.indexNodeSelected = data.parsedFileNodeIndex;
       this.nodeOnModify.members = data.node.members;
@@ -451,5 +452,11 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         this.metadataRetrieved.push(mdt.fullName);
       });
     },
+
+    UPDATE_LASTMODIFIED_ON_XML(data)
+    {
+      console.log('UPDATE', data)
+      this.parsedFile[data.idx].parsed['#comment'] = { '#text': data.info };
+    }
   },
 });

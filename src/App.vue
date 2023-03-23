@@ -12,7 +12,7 @@
           dense
           dark
           standout="bg-blue-3 text-white"
-          v-model="appStore.selectedOrg"
+          v-model="setOrgSelection"
           :options="appStore.orgs"
           label="ORG"
           style="margin-right: 1%"
@@ -26,6 +26,23 @@
             <div class="bg-blue-3 row no-wrap q-pa-md">
               <div class="column">
                 <div class="text-h6 text-white q-mb-md">Settings</div>
+                <q-input
+                  dense
+                  dark
+                  readonly
+                  v-model="appStore.nameOperator"
+                  label="Nome Cognome"
+                />
+                <q-btn
+                  dense
+                  dark
+                  flat
+                  class="text-white"
+                  label="SET NOME E COGNOME"
+                  style="padding: 1%; margin: 5%"
+                  @click="setNameOperator"
+                />
+                <q-separator dark spaced />
                 <q-input
                   dense
                   dark
@@ -162,6 +179,22 @@ export default defineComponent({
     const xmlStore = useXMLViewerStore();
     const mergeToolStore = useMergeToolStore();
 
+    function setNameOperator() {
+      //console.log($q);
+      $q.dialog({
+        title: "Nome e Cognome dell'utilizzatore",
+        message: "",
+        dark: true,
+        cancel: true,
+        persistent: true,
+        prompt: {
+          model: "",
+        },
+      }).onOk((data) => {
+        localStorage.setItem("NAME_OPERATOR", data);
+        appStore.nameOperator = data;
+      });
+    }
     function setApi() {
       //console.log($q);
       $q.dialog({
@@ -186,7 +219,21 @@ export default defineComponent({
       xmlStore,
       mergeToolStore,
       setApi,
+      setNameOperator,
     };
+  },
+  computed: {
+    setOrgSelection: {
+      get() {
+        return this.appStore.selectedOrg;
+      },
+      set(org) {
+        this.appStore.selectedOrg = org;
+        this.appStore.lastActiveOrg == null
+          ? (this.appStore.lastActiveOrg = org)
+          : null;
+      },
+    },
   },
   async mounted() {
     this.xmlStore.$q = useQuasar();
@@ -197,6 +244,7 @@ export default defineComponent({
     this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
 
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
+    this.appStore.nameOperator = localStorage.getItem("NAME_OPERATOR");
 
     if (!this.appStore.selectedOrg) {
       Notify.create({

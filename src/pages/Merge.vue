@@ -109,7 +109,7 @@ export default {
   methods: {
     closeMergingTool() {
       this.XMLViewerStore.dialogMerge = false;
-      this.MergeToolStore.labelProgress = "";
+      this.MergeToolStore.labelProgress = "IN ATTESA";
       this.MergeToolStore.progress = false;
       this.MergeToolStore.merging = false;
     },
