@@ -26,7 +26,19 @@
           dark
           v-model="JsonTestStore.bodyJson"
           readonly
-        />
+        >
+          <template v-slot:after>
+            <q-btn
+              color="orange-5"
+              text-color="white"
+              style="height: -webkit-fill-available"
+              push
+              dense
+              icon="fa-solid fa-copy"
+              @click="copyJson"
+            />
+          </template>
+        </q-input>
       </q-card-section>
     </q-card>
   </q-dialog>
@@ -35,6 +47,9 @@
 import { useXMLViewerStore } from "src/stores/xml_viewer";
 import { useTestJson } from "src/stores/testJson";
 
+import { useQuasar, Notify } from "quasar";
+import { useClipboard, usePermission } from "@vueuse/core";
+
 export default {
   computed: {},
 
@@ -42,14 +57,28 @@ export default {
     const XMLViewerStore = useXMLViewerStore();
     const JsonTestStore = useTestJson();
 
+    const $q = useQuasar();
+    const { text, isSupported, copy } = useClipboard();
+
     return {
       XMLViewerStore,
       JsonTestStore,
+      copy,
+      Notify,
     };
   },
   methods: {
     closeJsonTest() {
       this.XMLViewerStore.dialogJsonTest = false;
+    },
+
+    copyJson() {
+      this.copy(this.JsonTestStore.bodyJson);
+      Notify.create({
+        message: "JSON copiato!",
+        color: "orange",
+        timeout: 3000,
+      });
     },
   },
 };

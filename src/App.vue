@@ -59,6 +59,16 @@
                   style="padding: 1%; margin: 5%"
                   @click="setApi"
                 />
+                <q-separator dark spaced />
+                <q-toggle
+                  v-model="autoCopyJsonTest"
+                  @click="updateAutoCopyJsonOnCreate"
+                  dark
+                  dense
+                  color="white"
+                  style="color: white"
+                  label="Abilita il copia automatico del JSON Test creato"
+                />
               </div>
 
               <q-separator vertical dark inset class="q-mx-lg" />
@@ -165,6 +175,7 @@ import { useAppStore } from "src/stores/app";
 import { useHistoryStore } from "./stores/history";
 import { useXMLViewerStore } from "./stores/xml_viewer";
 import { useMergeToolStore } from "./stores/mergeTool";
+import { useTestJson } from "./stores/testJson";
 
 import XMLViewer from "./pages/XMLViewer.vue";
 import MergeVue from "./pages/Merge.vue";
@@ -180,6 +191,7 @@ export default defineComponent({
     const historyStore = useHistoryStore();
     const xmlStore = useXMLViewerStore();
     const mergeToolStore = useMergeToolStore();
+    const jsonTestStore = useTestJson();
 
     function setNameOperator() {
       //console.log($q);
@@ -220,6 +232,7 @@ export default defineComponent({
       historyStore,
       xmlStore,
       mergeToolStore,
+      jsonTestStore,
       setApi,
       setNameOperator,
     };
@@ -236,6 +249,14 @@ export default defineComponent({
           : null;
       },
     },
+    autoCopyJsonTest: {
+      get() {
+        return this.jsonTestStore.autoCopyJsonOnCreate;
+      },
+      set(data) {
+        this.jsonTestStore.autoCopyJsonOnCreate = data;
+      },
+    },
   },
   async mounted() {
     this.xmlStore.$q = useQuasar();
@@ -247,6 +268,8 @@ export default defineComponent({
 
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
     this.appStore.nameOperator = localStorage.getItem("NAME_OPERATOR");
+    this.jsonTestStore.autoCopyJsonOnCreate =
+      localStorage.getItem("AUTO_COPY_JSON_ON_CREATE") == "true" ? true : false;
 
     if (!this.appStore.selectedOrg) {
       Notify.create({
@@ -294,6 +317,13 @@ export default defineComponent({
 
     quitApp() {
       window.myAPI.quitApp();
+    },
+
+    updateAutoCopyJsonOnCreate() {
+      localStorage.setItem(
+        "AUTO_COPY_JSON_ON_CREATE",
+        this.jsonTestStore.autoCopyJsonOnCreate
+      );
     },
   },
 });

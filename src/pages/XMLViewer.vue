@@ -501,6 +501,16 @@ export default {
 
         this.JsonTestStore.apexClassFounded = existApexClasses[0].members;
         this.JsonTestStore.INIT_JSON();
+
+        if (this.JsonTestStore.autoCopyJsonOnCreate) {
+          this.copy(this.JsonTestStore.bodyJson);
+          Notify.create({
+            message: "JSON copiato!",
+            color: "orange",
+            timeout: 3000,
+          });
+        }
+
         this.dialogJsonTest = !this.dialogJsonTest;
         this.XMLViewerStore.downloadingMDT = false;
         this.notifyDismissDownloadMDT();

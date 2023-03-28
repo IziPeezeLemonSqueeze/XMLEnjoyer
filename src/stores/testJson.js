@@ -12,6 +12,8 @@ export const useTestJson = defineStore("test_json", {
 
     bodyJson: "",
 
+    autoCopyJsonOnCreate: false,
+
   }),
   actions: {
 
