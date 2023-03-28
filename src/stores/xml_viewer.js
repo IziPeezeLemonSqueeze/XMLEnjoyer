@@ -1,12 +1,14 @@
 import { defineStore } from "pinia";
 import { XMLParser } from "fast-xml-parser";
 import { useHistoryStore } from "./history";
+import { useAppStore } from "./app";
 import { Notify } from "quasar";
 
 export const useXMLViewerStore = defineStore("xml_viewer", {
   state: () => ({
     parsedFile: [],
     historyStore: useHistoryStore(),
+    appStore: useAppStore(),
 
     metadataList: [
       "AccountRelationshipShareRule",
@@ -161,6 +163,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     dialogMerge: false,
 
+    dialogJsonTest: false,
+
     dialogModifyType: false,
 
     nodeOnModify: {},
@@ -169,8 +173,12 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     $q: null,
     Notify: null,
 
+    downloadingMDT: false,
+
     lastMetadataRetrievied: null,
     metadataRetrieved: [],
+
+
   }),
   getters: {
     GET_TEXT_FILE: (state) => state.textFile,
@@ -180,6 +188,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     GET_DIALOG_MERGE_HIDE: (state) => state.dialogMerge,
 
     GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType,
+
+    GET_DIALOG_TEST_JSON_HIDE: (state) => state.dialogJsonTest,
   },
   actions: {
     SET_HOVER(data)
@@ -334,7 +344,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_TYPE_ON_XML(data)
     {
-      this.parsedFile[data.index].parsed["Package"]["types"].push({
+      this.parsedFile[data.index].parsed["Package"]["types"].unshift({
         members: [],
         name: { "#text": data.name },
       });
@@ -344,6 +354,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         color: "green",
         timeout: 3000,
       });
+      this.ADD_COMMENT_LASTMODIFIED_ON_XML(data.index);
     },
 
     SET_TYPE_ON_MODIFY(data)
@@ -420,6 +431,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
           n.members = mem;
         }
       );
+      this.ADD_COMMENT_LASTMODIFIED_ON_XML(data.indexParsedFile);
     },
 
     SET_METADATA_RETRIEVED(data)
@@ -453,10 +465,20 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       });
     },
 
-    UPDATE_LASTMODIFIED_ON_XML(data)
+    ADD_COMMENT_LASTMODIFIED_ON_XML(data)
     {
-      console.log('UPDATE', data)
-      this.parsedFile[data.idx].parsed['#comment'] = { '#text': data.info };
+      const nowDate = new Date();
+      this.parsedFile[data].parsed['#comment'] = {
+        '#text': this.appStore.nameOperator +
+          " " +
+          nowDate.getDate() +
+          "/" +
+          (nowDate.getMonth() + 1 < 10
+            ? "0" + (nowDate.getMonth() + 1)
+            : nowDate.getMonth() + 1) +
+          "/" +
+          nowDate.getFullYear(),
+      };
     }
   },
 });

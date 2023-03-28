@@ -55,7 +55,7 @@
             <q-list
               bordered
               padding
-              style="min-width: 300px; border-radius: 10px"
+              style="min-width: 350px; border-radius: 10px; max-width: 350px"
               :class="
                 item.hover
                   ? item.parsed['Package']['@_xmlns']
@@ -144,6 +144,7 @@
                       overflow-wrap: break-word;
                       text-align-last: left;
                       text-align: -webkit-left;
+                      line-break: anywhere;
                     "
                   >
                     Nome File:
@@ -172,9 +173,9 @@
                 dense
                 dark
                 style="
-                  border-radius: 0 0 10px 10px;
-                  justify-content: space-eve;
+                  border-radius: 0px 0px 10px 10px;
                   justify-content: center;
+                  justify-content: space-around;
                 "
               >
                 <q-btn
@@ -201,6 +202,17 @@
                       indexParsedFile: index,
                     })
                   "
+                />
+                <q-btn
+                  dense
+                  flat
+                  rounded
+                  label="JSON Test"
+                  icon="fa-solid fa-flask-vial"
+                  :disable="
+                    XMLViewerStore.downloadingMDT || !AppStore.selectedOrg
+                  "
+                  @click="initJsonTest(index)"
                 />
               </q-bar>
               <q-scroll-area style="height: 500px">
@@ -243,6 +255,7 @@
                                 dense
                                 class="q-pa-sx"
                                 label="si"
+                                :disable="XMLViewerStore.downloadingMDT"
                                 @click="
                                   XMLViewerStore.REMOVE_NODE(index, idxEl);
                                   scope.cancel();
@@ -266,6 +279,7 @@
                         dense
                         flat
                         size="xs"
+                        :disable="XMLViewerStore.downloadingMDT"
                         @click="
                           openAndEditType({
                             parsedFileIndex: index,
@@ -319,6 +333,7 @@
 import { useAppStore } from "src/stores/app";
 import { useMergeToolStore } from "src/stores/mergeTool";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
+import { useTestJson } from "src/stores/testJson";
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { useClipboard, usePermission } from "@vueuse/core";
@@ -327,11 +342,13 @@ import { useQuasar, Notify, QSpinnerGrid } from "quasar";
 export default {
   name: "XMLVIEWER",
   setup() {
+    let notifyDismissDownloadMDT = null;
     let xmlText = null;
     const $q = useQuasar();
     const XMLViewerStore = useXMLViewerStore();
     const MergeToolStore = useMergeToolStore();
     const AppStore = useAppStore();
+    const JsonTestStore = useTestJson();
 
     const { text, isSupported, copy } = useClipboard();
     const permissionRead = usePermission("clipboard-read");
@@ -342,12 +359,14 @@ export default {
       XMLViewerStore,
       MergeToolStore,
       AppStore,
+      JsonTestStore,
       Notify,
       text,
       copy,
       permissionRead,
       permissionWrite,
       isSupported,
+      notifyDismissDownloadMDT,
     };
   },
   computed: {
@@ -365,6 +384,14 @@ export default {
       },
       set(data) {
         this.XMLViewerStore.dialogModifyType = data;
+      },
+    },
+    dialogJsonTest: {
+      get() {
+        return this.XMLViewerStore.dialogJsonTest;
+      },
+      set(data) {
+        this.XMLViewerStore.dialogJsonTest = data;
       },
     },
     file: {
@@ -390,28 +417,12 @@ export default {
         e.preventDefault(); // present "Save Page" from getting triggered.
 
         this.text = await window.myAPI.getExternalClipboard();
-        console.log("EXTERNAL CLIP", this.text);
         this.XMLViewerStore.SET_FILE(this.text);
         console.log("CONTROL V");
-        /*        console.log(
-          "CTRLV",
-          this.text,
-          this.permissionRead,
-          this.permissionRead,
-          this.isSupported
-        ); */
       } else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault(); // present "Save Page" from getting triggered.
         this.copy(this.MergeToolStore.EXPORT_XML());
         console.log("CONTROL C");
-        /*       console.log(
-          "CTRLC",
-          this.text,
-          this.permissionRead,
-          this.permissionRead,
-          this.isSupported,
-          this.MergeToolStore.EXPORT_XML()
-        ); */
       }
     };
 
@@ -438,15 +449,7 @@ export default {
           ],
         });
       } else {
-        let notifyDismiss = this.Notify.create({
-          message: "Scarico Metadata dalla ORG...",
-          color: "blue",
-          timeout: 0,
-          position: "bottom",
-          textColor: "white",
-          spinner: QSpinnerGrid,
-        });
-
+        this._notifyDownloadFromOrgMDT();
         //localStorage.setItem("MDT_TEMP", []);
         if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
           this.XMLViewerStore.lastMetadataRetrievied = null;
@@ -464,33 +467,60 @@ export default {
             })
           );
         }
-
-        notifyDismiss();
+        this.notifyDismissDownloadMDT();
+        this.XMLViewerStore.downloadingMDT = false;
       }
 
       this.dialogModifyType = true;
-
       //console.log(data);
       this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
-      const nowDate = new Date();
-      this.XMLViewerStore.UPDATE_LASTMODIFIED_ON_XML({
-        idx: data.parsedFileIndex,
-        info:
-          this.AppStore.nameOperator +
-          " " +
-          nowDate.getDate() +
-          "/" +
-          (nowDate.getMonth() + 1 < 10
-            ? "0" + (nowDate.getMonth() + 1)
-            : nowDate.getMonth() + 1) +
-          "/" +
-          nowDate.getFullYear(),
-      });
+
+      this.XMLViewerStore.ADD_COMMENT_LASTMODIFIED_ON_XML(data.parsedFileIndex);
     },
 
     savePackage() {
       let xml = this.MergeToolStore.EXPORT_XML();
       window.myAPI.savePackage(xml);
+    },
+
+    async initJsonTest(data) {
+      let existApexClasses = this.XMLViewerStore.parsedFile[data].parsed[
+        "Package"
+      ]["types"].filter((type) => type.name["#text"] == "ApexClass");
+      console.log(existApexClasses);
+      if (existApexClasses.length > 0) {
+        this.JsonTestStore.statusApexClasses = true;
+        this._notifyDownloadFromOrgMDT();
+        this.XMLViewerStore.SET_METADATA_RETRIEVED(
+          await window.myAPI.retrieveMetadata({
+            org: this.AppStore.GET_SELECTED_ORG,
+            mdtName: "ApexClass",
+            api: localStorage.getItem("API_VERSION"),
+          })
+        );
+
+        this.JsonTestStore.apexClassFounded = existApexClasses[0].members;
+        this.JsonTestStore.INIT_JSON();
+        this.dialogJsonTest = !this.dialogJsonTest;
+        this.XMLViewerStore.downloadingMDT = false;
+        this.notifyDismissDownloadMDT();
+      } else {
+        this.dialogJsonTest = !this.dialogJsonTest;
+        this.JsonTestStore.statusApexClasses = false;
+        this.JsonTestStore.bodyJson = "Non ci sono classi Apex nel XML";
+      }
+    },
+
+    _notifyDownloadFromOrgMDT() {
+      this.XMLViewerStore.downloadingMDT = true;
+      this.notifyDismissDownloadMDT = this.Notify.create({
+        message: "Scarico Metadata dalla ORG...",
+        color: "blue",
+        timeout: 0,
+        position: "bottom",
+        textColor: "white",
+        spinner: QSpinnerGrid,
+      });
     },
   },
   components: {

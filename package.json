@@ -1,6 +1,6 @@
 {
   "name": "xmlenjoyer",
-  "version": "0.6.2",
+  "version": "0.7.0",
   "description": "Salesforce package xml tools ",
   "productName": "XmlEnjoyer",
   "author": "Stefano Pastore @ NTTDATA",
@@ -18,7 +18,7 @@
     "electron-devtools-installer": "^3.2.0",
     "fast-xml-parser": "^4.0.9",
     "pinia": "^2.0.11",
-    "quasar": "^2.6.0",
+    "quasar": "^2.11.9",
     "vue": "^3.0.0",
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.0.0",

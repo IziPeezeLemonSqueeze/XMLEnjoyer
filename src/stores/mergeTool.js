@@ -109,7 +109,19 @@ export const useMergeToolStore = defineStore("merge_tool", {
         try
         {
           const selected = this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0];
-          const lastComment = selected.parsed['#comment']['#text'];
+          const lastComment = '';
+          try
+          {
+            lastComment = selected.parsed['#comment']['#text'];
+          } catch (e)
+          {
+            this.Notify.create({
+              message:
+                "PROBLEMA EXPORT: Modifica prima il file, commento non disponibile",
+              color: "orange",
+              timeout: 3000,
+            });
+          }
 
           if (selected || selected == undefined)
           {
@@ -130,7 +142,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
         {
           this.Notify.create({
             message:
-              "ERRORE EXPORT " + e,
+              "ERRORE EXPORT: " + e,
             color: "orange",
             timeout: 3000,
           });

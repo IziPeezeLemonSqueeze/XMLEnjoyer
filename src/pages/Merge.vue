@@ -1,6 +1,6 @@
 <template>
-  <q-dialog v-model="XMLViewerStore.GET_DIALOG_MERGE_HIDE">
-    <q-card dark class="bg-grey-5" style="width: -webkit-fill-available">
+  <q-dialog v-model="XMLViewerStore.GET_DIALOG_MERGE_HIDE" persistent>
+    <q-card dark class="bg-green-4" style="width: -webkit-fill-available">
       <q-toolbar>
         <q-icon size="md" name="fa-solid fa-object-group" />
 

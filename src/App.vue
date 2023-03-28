@@ -152,6 +152,7 @@
         <MergeVue />
         <EditType />
         <LoginDialog />
+        <TestJson />
       </q-page>
     </q-page-container>
   </q-layout>
@@ -169,6 +170,7 @@ import XMLViewer from "./pages/XMLViewer.vue";
 import MergeVue from "./pages/Merge.vue";
 import EditType from "./pages/EditType.vue";
 import LoginDialog from "./pages/LoginDialog.vue";
+import TestJson from "./pages/TestJson.vue";
 
 export default defineComponent({
   name: "App",
@@ -182,7 +184,7 @@ export default defineComponent({
     function setNameOperator() {
       //console.log($q);
       $q.dialog({
-        title: "Nome e Cognome dell'utilizzatore",
+        title: "Nome e Cognome",
         message: "",
         dark: true,
         cancel: true,
@@ -267,6 +269,7 @@ export default defineComponent({
     MergeVue,
     EditType,
     LoginDialog,
+    TestJson,
   },
   methods: {
     logout(data) {
