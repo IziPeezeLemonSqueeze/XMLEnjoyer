@@ -297,6 +297,12 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         parsed: parser.parse(data.end.target.result),
       };
 
+      // CHECK TYPES COMMENTED THEN DELETE
+      if (pf.parsed['Package']['#comment'])
+      {
+        delete pf.parsed['Package']['#comment'];
+      }
+
       // pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
       if (!pf.text.includes('<Package') ||
         !pf.text.includes('soap.sforce.com'))
@@ -472,11 +478,12 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_COMMENT_LASTMODIFIED_ON_XML(data)
     {
+      console.log(data, 'ADD LAST MODIFIED', this.appStore.nameOperator);
       const nowDate = new Date();
       this.parsedFile[data].parsed['#comment'] = {
         '#text': this.appStore.nameOperator +
           " " +
-          nowDate.getDate() +
+          (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate()) +
           "/" +
           (nowDate.getMonth() + 1 < 10
             ? "0" + (nowDate.getMonth() + 1)
