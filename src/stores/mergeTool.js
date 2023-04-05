@@ -99,11 +99,9 @@ export const useMergeToolStore = defineStore("merge_tool", {
     {
       const builder = new XMLBuilder({
         format: true,
-        indentBy: "    ",
         ignoreAttributes: false,
         suppressEmptyNode: true,
-        suppressUnpairedNode: true,
-        commentPropName: "#comment",
+        suppressUnpairedNode: true
       });
 
       if (this.XMLViewerStore.selectedXML.length == 1)
@@ -111,13 +109,19 @@ export const useMergeToolStore = defineStore("merge_tool", {
         try
         {
           const selected = this.XMLViewerStore.parsedFile.filter((pf) => pf.checked)[0];
-
-          this.XMLViewerStore
-            .ADD_COMMENT_LASTMODIFIED_ON_XML(
-              this.XMLViewerStore.parsedFile.map(ff => ff.uuid).indexOf(selected.uuid)
-            );
-
-          const lastComment = selected.parsed['#comment']['#text'];
+          const lastComment = '';
+          try
+          {
+            lastComment = selected.parsed['#comment']['#text'];
+          } catch (e)
+          {
+            this.Notify.create({
+              message:
+                "PROBLEMA EXPORT: Modifica prima il file, commento non disponibile",
+              color: "orange",
+              timeout: 3000,
+            });
+          }
 
           if (selected || selected == undefined)
           {
