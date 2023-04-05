@@ -337,7 +337,7 @@ import { useTestJson } from "src/stores/testJson";
 
 import { VueDraggableNext } from "vue-draggable-next";
 import { useClipboard, usePermission } from "@vueuse/core";
-import { useQuasar, Notify, QSpinnerGrid } from "quasar";
+import { useQuasar, Notify } from "quasar";
 
 export default {
   name: "XMLVIEWER",
@@ -448,8 +448,18 @@ export default {
             },
           ],
         });
+      } else if (data.node.name["#text"] == "CHANGE_ME") {
+        this.dialogModifyType = true;
+        //console.log(data);
+        this.XMLViewerStore.SET_TYPE_ON_MODIFY(data);
+
+        this.XMLViewerStore.ADD_COMMENT_LASTMODIFIED_ON_XML(
+          data.parsedFileIndex
+        );
       } else {
-        this._notifyDownloadFromOrgMDT();
+        //this._notifyDownloadFromOrgMDT(); TODO
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+
         //localStorage.setItem("MDT_TEMP", []);
         if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
           this.XMLViewerStore.lastMetadataRetrievied = null;
@@ -467,7 +477,9 @@ export default {
             })
           );
         }
-        this.notifyDismissDownloadMDT();
+        //this.notifyDismissDownloadMDT(); TODO
+        this.XMLViewerStore.notifyDismissDownloadMDT();
+
         this.XMLViewerStore.downloadingMDT = false;
       }
 
@@ -490,7 +502,10 @@ export default {
       console.log(existApexClasses);
       if (existApexClasses.length > 0) {
         this.JsonTestStore.statusApexClasses = true;
-        this._notifyDownloadFromOrgMDT();
+
+        //this._notifyDownloadFromOrgMDT(); TODO
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+
         this.XMLViewerStore.SET_METADATA_RETRIEVED(
           await window.myAPI.retrieveMetadata({
             org: this.AppStore.GET_SELECTED_ORG,
@@ -513,14 +528,16 @@ export default {
 
         this.dialogJsonTest = !this.dialogJsonTest;
         this.XMLViewerStore.downloadingMDT = false;
-        this.notifyDismissDownloadMDT();
+
+        //this.notifyDismissDownloadMDT(); TODO
+        this.XMLViewerStore.notifyDismissDownloadMDT();
       } else {
         this.dialogJsonTest = !this.dialogJsonTest;
         this.JsonTestStore.statusApexClasses = false;
         this.JsonTestStore.bodyJson = "Non ci sono classi Apex nel XML";
       }
     },
-
+    /*
     _notifyDownloadFromOrgMDT() {
       this.XMLViewerStore.downloadingMDT = true;
       this.notifyDismissDownloadMDT = this.Notify.create({
@@ -531,7 +548,7 @@ export default {
         textColor: "white",
         spinner: QSpinnerGrid,
       });
-    },
+    }, */
   },
   components: {
     draggable: VueDraggableNext,

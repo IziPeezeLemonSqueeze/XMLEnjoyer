@@ -24,6 +24,7 @@
       <q-separator spaced dark />
       <div class="row full-width" style="place-content: center">
         <q-btn
+          :disable="XMLViewerStore.downloadingMDT"
           dense
           flat
           rounded
@@ -32,6 +33,7 @@
           @click="XMLViewerStore.ADD_TYPE_FROM_ONMODIFY"
         />
         <q-btn
+          :disable="XMLViewerStore.downloadingMDT"
           dense
           flat
           label="ORDINA"
@@ -42,11 +44,16 @@
       </div>
       <q-card-section>
         <q-list
+          :disable="XMLViewerStore.downloadingMDT"
           bordered
           separator
           v-for="(el, index) in XMLViewerStore.nodeOnModify.members"
         >
-          <q-item clickable v-ripple :key="index">
+          <q-item
+            :clickable="XMLViewerStore.downloadingMDT"
+            v-ripple
+            :key="index"
+          >
             <q-item-section side top>
               <q-btn
                 dense
@@ -112,12 +119,14 @@
               @keyup.enter="scope.set"
             /> -->
             <q-select
+              :disable="XMLViewerStore.downloadingMDT"
               filled
               v-model="XMLViewerStore.nodeOnModify.name['#text']"
               use-input
               hide-selected
               fill-input
               input-debounce="100"
+              @popup-hide="updatedTypeName"
               :options="optionsMDTList"
               @filter="filterFnMDTList"
             >
@@ -138,17 +147,21 @@
   </q-dialog>
 </template>
 <script>
+import { useAppStore } from "src/stores/app";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
+
 import { ref } from "vue";
 export default {
   computed: {},
 
   setup() {
     const XMLViewerStore = useXMLViewerStore();
+    const AppStore = useAppStore();
     const options = ref(XMLViewerStore.metadataRetrieved);
     const optionsMDTList = ref(XMLViewerStore.metadataList);
     return {
       XMLViewerStore,
+      AppStore,
       options,
       optionsMDTList,
 
@@ -171,9 +184,37 @@ export default {
       },
     };
   },
-  methods: {},
-  update() {
-    this.XMLViewerStore.SET_METADATA_RETRIEVED();
+  methods: {
+    async updatedTypeName() {
+      if (this.AppStore.selectedOrg != null) {
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+
+        if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
+          this.XMLViewerStore.lastMetadataRetrievied = null;
+          this.AppStore.SET_PAIR_ORG();
+        }
+        if (
+          this.XMLViewerStore.nodeOnModify.name["#text"] !=
+          this.XMLViewerStore.lastMetadataRetrievied
+        ) {
+          this.XMLViewerStore.lastMetadataRetrievied =
+            this.XMLViewerStore.nodeOnModify.name["#text"];
+          this.XMLViewerStore.SET_METADATA_RETRIEVED(
+            await window.myAPI.retrieveMetadata({
+              org: this.AppStore.GET_SELECTED_ORG,
+              mdtName: this.XMLViewerStore.nodeOnModify.name["#text"],
+              api: localStorage.getItem("API_VERSION"),
+            })
+          );
+        }
+        this.XMLViewerStore.notifyDismissDownloadMDT();
+
+        this.XMLViewerStore.downloadingMDT = false;
+      }
+    },
+    update() {
+      this.XMLViewerStore.SET_METADATA_RETRIEVED();
+    },
   },
 };
 </script>

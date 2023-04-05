@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 import { XMLParser } from "fast-xml-parser";
 import { useHistoryStore } from "./history";
 import { useAppStore } from "./app";
-import { Notify } from "quasar";
+import { Notify, QSpinnerGrid } from "quasar";
 
 export const useXMLViewerStore = defineStore("xml_viewer", {
   state: () => ({
@@ -178,6 +178,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     lastMetadataRetrievied: null,
     metadataRetrieved: [],
 
+    notifyDismissDownloadMDT: null,
 
   }),
   getters: {
@@ -190,6 +191,10 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     GET_DIALOG_MODIFY_TYPE_HIDE: (state) => state.dialogModifyType,
 
     GET_DIALOG_TEST_JSON_HIDE: (state) => state.dialogJsonTest,
+
+    GET_NOTIFY_DISMISS_DOWNLOAD_MDT: (state) => state.notifyDismissDownloadMDT,
+
+
   },
   actions: {
     SET_HOVER(data)
@@ -479,6 +484,19 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
           "/" +
           nowDate.getFullYear(),
       };
+    },
+
+    CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT()
+    {
+      this.downloadingMDT = true;
+      this.notifyDismissDownloadMDT = this.Notify.create({
+        message: "Scarico Metadata dalla ORG...",
+        color: "blue",
+        timeout: 0,
+        position: "bottom",
+        textColor: "white",
+        spinner: QSpinnerGrid,
+      });
     }
   },
 });
