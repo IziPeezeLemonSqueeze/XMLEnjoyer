@@ -53,6 +53,7 @@ export const useAppStore = defineStore("app", {
   getters: {
     GET_SELECTED_ORG: (state) => state.selectedOrg,
     GET_DIALOG_LOGIN: (state) => state.dialogLogin,
+    GET_API_VERSION: (state) => state.apiVersion,
 
   }
 });

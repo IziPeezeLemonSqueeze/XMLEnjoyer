@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { useXMLViewerStore } from "./xml_viewer";
+import { useAppStore } from "./app";
 
 import { XMLValidator, XMLBuilder } from "fast-xml-parser";
 import { Notify } from "quasar";
@@ -8,6 +9,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
   state: () => ({
 
     XMLViewerStore: useXMLViewerStore(),
+    AppStore: useAppStore(),
 
     validationXml: false,
     reorderOnFinalXml: false,
@@ -130,6 +132,7 @@ export const useMergeToolStore = defineStore("merge_tool", {
             delete selected.parsed['#comment'];
             let builded = builder.build(selected.parsed);
             selected.parsed['#comment'] = { '#text': lastComment };
+            selected.parsed['Package']['version'] = { '#text': this.AppStore.GET_API_VERSION }
             builded += '<!-- ' + lastComment + ' -->';
 
             return builded;
