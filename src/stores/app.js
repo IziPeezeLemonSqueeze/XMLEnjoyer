@@ -3,6 +3,19 @@ import { useXMLViewerStore } from "./xml_viewer";
 
 export const useAppStore = defineStore("app", {
   state: () => ({
+
+    appChoiced: false,
+    appConfigured: [
+      'XMLMERGE',
+      'XMLPACKAGE'
+    ],
+    appActive: '',
+    autoLaunchApp: '',
+    firstLaunch: true,
+
+
+
+
     folderStructure: [],
     xmlStore: useXMLViewerStore(),
 
@@ -47,6 +60,13 @@ export const useAppStore = defineStore("app", {
     SET_PAIR_ORG()
     {
       this.lastActiveOrg = this.selectedOrg;
+    },
+
+    SET_MAIN_MENU()
+    {
+      this.appChoiced = false;
+      this.appActive = '';
+      //localStorage.setItem("AUTO_LAUNCH", '');
     }
 
   },
@@ -54,6 +74,8 @@ export const useAppStore = defineStore("app", {
     GET_SELECTED_ORG: (state) => state.selectedOrg,
     GET_DIALOG_LOGIN: (state) => state.dialogLogin,
     GET_API_VERSION: (state) => state.apiVersion,
+    GET_APP_CHOICED: (state) => state.appChoiced,
+    GET_APP_ACTIVE: (state) => state.appActive,
 
   }
 });

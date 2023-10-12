@@ -194,7 +194,7 @@ ipcMain.handle('auth-list', async () =>
   const util = require('node:util');
   const execc = util.promisify(require('node:child_process').exec);
   const { stdout, stderr } = await execc(
-    'sfdx force:auth:list --json', {
+    'sf org list auth --json', {
     maxBuffer: 1024 * 1024 * 8,
   });
   let bufferData = stdout;
@@ -313,13 +313,23 @@ ipcMain.handle('retrieve-metadata', async (value, ...args) =>
 {
   const util = require('node:util');
   const execc = util.promisify(require('node:child_process').exec);
+  //old
+  /*   const { stdout, stderr } = await execc(
+      'sfdx force:mdapi:listmetadata --json -u '
+      + args[0].org
+      + ' -m ' + args[0].mdtName
+      + ' -a ' + args[0].api, {
+      maxBuffer: 1024 * 1024 * 8,
+    }); */
+  //new
   const { stdout, stderr } = await execc(
-    'sfdx force:mdapi:listmetadata --json -u '
+    'sf org list metadata --json -o '
     + args[0].org
     + ' -m ' + args[0].mdtName
-    + ' -a ' + args[0].api, {
+    + ' --api-version ' + args[0].api, {
     maxBuffer: 1024 * 1024 * 8,
   });
+
   let bufferData = stdout;
   return bufferData;
 
@@ -333,4 +343,17 @@ ipcMain.handle('get-clipboard', async (value, ...args) =>
     return text;
   }
   clipboard.clear();
+});
+
+ipcMain.handle('check-sfdx-update', async (value, ...args) =>
+{
+  const util = require('node:util');
+  const execc = util.promisify(require('node:child_process').exec);
+  const { stdout, stderr } = await execc(
+    'sfdx -v ', {
+    maxBuffer: 1024 * 1024 * 8,
+  });
+  console.log(stdout);
+  let bufferData = stdout;
+  return bufferData;
 });

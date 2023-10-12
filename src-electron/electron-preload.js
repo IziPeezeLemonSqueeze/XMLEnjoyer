@@ -70,6 +70,11 @@ contextBridge.exposeInMainWorld("myAPI", {
   getExternalClipboard: async () =>
   {
     return await ipcRenderer.invoke('get-clipboard');
+  },
+
+  checkSfdxUpdate: async () =>
+  {
+    return await ipcRenderer.invoke('check-sfdx-update');
   }
 
 

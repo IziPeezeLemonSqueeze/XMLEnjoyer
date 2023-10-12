@@ -1,4 +1,4 @@
-<template>
+<template class="unselectable">
   <q-layout>
     <q-header reveal elevated class="bg-blue-3 text-white" height-hint="98">
       <q-toolbar>
@@ -8,6 +8,7 @@
           </q-avatar>
           {{ "< XML Enjoyer @Salesforce >" }}
         </q-toolbar-title>
+
         <q-select
           dense
           dark
@@ -122,50 +123,43 @@
     <q-page-container class="bg-grey-10 full-width">
       <q-page class="row full-width">
         <div
-          class="col q-pa-md text-white"
-          style="max-width: 250px; min-width: auto; border-color: green"
+          v-if="!appStore.GET_APP_CHOICED"
+          style="width: inherit; align-self: center"
+          full-width
         >
-          HISTORY XML
-          <q-separator spaced dark />
-          <q-scroll-area style="height: 880px">
-            <q-list dark bordered style="border-radius: 10px">
-              <q-item
-                style="overflow-wrap: anywhere"
-                v-for="(item, index) in historyStore.history"
-                :key="index"
-                @mouseenter="xmlStore.SET_HOVER({ b: true, i: item.uuid })"
-                @mouseleave="xmlStore.SET_HOVER({ b: false, i: item.uuid })"
-                clickable
-                v-ripple
-              >
-                <q-item-section avatar>
-                  <q-icon
-                    color="white"
-                    :name="item.action === 'add' ? 'fa-solid fa-plus' : null"
-                  />
-                </q-item-section>
-
-                <q-item-section>
-                  <strong>{{ item.name }}</strong>
-                  <q-tooltip class="bg-grey-9 text-body2" :offset="[10, 10]">
-                    Percorso:
-                    <strong>{{ item.path }}</strong>
-                  </q-tooltip>
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-scroll-area>
+          <AppChoser />
         </div>
-        <q-separator vertical dark />
-
-        <XMLViewer />
-        <MergeVue />
-        <EditType />
-        <LoginDialog />
-        <TestJson />
+        <div
+          class="row full-width"
+          v-else-if="appStore.GET_APP_ACTIVE == 'XMLPACKAGE'"
+        >
+          <div class="row full-width">
+            <History />
+            <XMLViewer />
+          </div>
+          <MergeVue />
+          <EditType />
+          <LoginDialog />
+          <TestJson />
+        </div>
+        <div
+          v-else-if="appStore.GET_APP_ACTIVE == 'XMLMERGE'"
+          class="row full-width"
+        >
+          <Desk />
+        </div>
       </q-page>
     </q-page-container>
   </q-layout>
+  <q-btn
+    v-if="appStore.GET_APP_CHOICED"
+    size="sm"
+    style="position: fixed; top: 98%; left: 48%; /* z-index: 10000; */"
+    push
+    color="primary"
+    label="Menù principale"
+    @click="appStore.SET_MAIN_MENU"
+  />
 </template>
 
 <script>
@@ -177,11 +171,15 @@ import { useXMLViewerStore } from "./stores/xml_viewer";
 import { useMergeToolStore } from "./stores/mergeTool";
 import { useTestJson } from "./stores/testJson";
 
-import XMLViewer from "./pages/XMLViewer.vue";
-import MergeVue from "./pages/Merge.vue";
-import EditType from "./pages/EditType.vue";
-import LoginDialog from "./pages/LoginDialog.vue";
-import TestJson from "./pages/TestJson.vue";
+import AppChoser from "./pages/AppChoser.vue";
+
+import XMLViewer from "./pages/XMLPACKAGE/XMLViewer.vue";
+import MergeVue from "./pages/XMLPACKAGE/Merge.vue";
+import EditType from "./pages/XMLPACKAGE/EditType.vue";
+import LoginDialog from "./pages/XMLPACKAGE/LoginDialog.vue";
+import TestJson from "./pages/XMLPACKAGE/TestJson.vue";
+import History from "./pages/XMLPACKAGE/History.vue";
+import Desk from "./pages/XMLMERGE/Desk.vue";
 
 export default defineComponent({
   name: "App",
@@ -270,22 +268,6 @@ export default defineComponent({
     this.appStore.nameOperator = localStorage.getItem("NAME_OPERATOR");
     this.jsonTestStore.autoCopyJsonOnCreate =
       localStorage.getItem("AUTO_COPY_JSON_ON_CREATE") == "true" ? true : false;
-
-    if (!this.appStore.selectedOrg) {
-      Notify.create({
-        message: "NO ORG SELECTED - NO AUTOCOMPLETE TYPES AVAILABLE ",
-        color: "orange",
-        timeout: 20000,
-        position: "bottom",
-        textColor: "black",
-        actions: [
-          {
-            label: "CLOSE",
-            handler: () => {},
-          },
-        ],
-      });
-    }
   },
   components: {
     XMLViewer,
@@ -293,6 +275,9 @@ export default defineComponent({
     EditType,
     LoginDialog,
     TestJson,
+    AppChoser,
+    History,
+    Desk,
   },
   methods: {
     logout(data) {
@@ -328,3 +313,13 @@ export default defineComponent({
   },
 });
 </script>
+<style>
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+</style>

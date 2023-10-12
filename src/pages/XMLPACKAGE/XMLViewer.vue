@@ -1,5 +1,5 @@
 <template>
-  <div class="col q-pa-md full-width">
+  <div class="col full-width">
     <div class="row q-ma-md">
       <q-file
         dark
@@ -327,6 +327,22 @@
         </draggable>
       </div>
     </q-scroll-area>
+    <div
+      style="position: fixed; vertical-align: middle; bottom: 10px; right: 10px"
+    >
+      <q-badge outline align="middle" color="primary">
+        SFDX: 7.196.9
+
+        <!--  <q-icon
+          name="fa-solid fa-caret-up"
+          style="margin-left: 5%; margin-right: 10%"
+        >
+          <q-tooltip>
+            sfdx-cli update available from 7.196.9 to 7.200.7
+          </q-tooltip>
+        </q-icon> -->
+      </q-badge>
+    </div>
   </div>
 </template>
 <script>
@@ -344,6 +360,8 @@ export default {
   setup() {
     let notifyDismissDownloadMDT = null;
     let xmlText = null;
+    let sfdxVersion = null;
+
     const $q = useQuasar();
     const XMLViewerStore = useXMLViewerStore();
     const MergeToolStore = useMergeToolStore();
@@ -356,6 +374,7 @@ export default {
 
     return {
       xmlText,
+      sfdxVersion,
       XMLViewerStore,
       MergeToolStore,
       AppStore,
@@ -402,7 +421,26 @@ export default {
       },
     },
   },
-  mounted() {
+  async mounted() {
+    if (!this.AppStore.selectedOrg) {
+      Notify.create({
+        message: "NO ORG SELECTED - NO AUTOCOMPLETE TYPES AVAILABLE ",
+        color: "orange",
+        timeout: 20000,
+        position: "bottom",
+        textColor: "black",
+        actions: [
+          {
+            label: "CLOSE",
+            handler: () => {},
+          },
+        ],
+      });
+    }
+
+    this.sfdxVersion = window.myAPI.checkSfdxUpdate();
+    console.log(await this.sfdxVersion);
+
     this.XMLViewerStore.$subscribe((mutation, state) => {
       switch (mutation.events.key) {
         case "parsedFile":

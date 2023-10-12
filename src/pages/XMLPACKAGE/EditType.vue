@@ -64,6 +64,7 @@
             </q-item-section>
             <q-item-section>
               <q-popup-edit
+                :disable="XMLViewerStore.downloadingMDT"
                 :auto-save="false"
                 style="width: 20%"
                 v-model="XMLViewerStore.nodeOnModify.members[index]['#text']"
@@ -195,7 +196,8 @@ export default {
         }
         if (
           this.XMLViewerStore.nodeOnModify.name["#text"] !=
-          this.XMLViewerStore.lastMetadataRetrievied
+            this.XMLViewerStore.lastMetadataRetrievied &&
+          this.XMLViewerStore.nodeOnModify.name["#text"] != "CHANGE_ME"
         ) {
           this.XMLViewerStore.lastMetadataRetrievied =
             this.XMLViewerStore.nodeOnModify.name["#text"];

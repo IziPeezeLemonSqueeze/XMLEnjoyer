@@ -2,7 +2,7 @@ const routes = [
   {
     path: "/",
     name: "XMLViewer",
-    component: () => import("pages/XMLViewer.vue"),
+    component: () => import("pages/XMLPACKAGE/XMLViewer.vue"),
   },
 
   // Always leave this as last one,

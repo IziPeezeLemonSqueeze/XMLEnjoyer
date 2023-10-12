@@ -130,9 +130,9 @@ export const useMergeToolStore = defineStore("merge_tool", {
               timeout: 3000,
             });
             delete selected.parsed['#comment'];
+            selected.parsed['Package']['version'] = { '#text': this.AppStore.GET_API_VERSION }
             let builded = builder.build(selected.parsed);
             selected.parsed['#comment'] = { '#text': lastComment };
-            selected.parsed['Package']['version'] = { '#text': this.AppStore.GET_API_VERSION }
             builded += '<!-- ' + lastComment + ' -->';
 
             return builded;
