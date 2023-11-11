@@ -8,18 +8,28 @@
           </q-avatar>
           {{ "< XML Enjoyer @Salesforce >" }}
         </q-toolbar-title>
-
+        <NoCLIDialog />
         <q-select
+          :disable="!appStore.GET_OPTION_MENU_DISABLED"
           dense
           dark
           standout="bg-blue-3 text-white"
           v-model="setOrgSelection"
           :options="appStore.orgs"
-          label="ORG"
-          style="margin-right: 1%"
+          label="Select ORG"
+          bg-color="blue"
+          style="margin-right: 1%; width: 150px"
         />
-        <q-btn dense flat round icon="fa-solid fa-gear">
+        <q-btn
+          :disable="!appStore.GET_OPTION_MENU_DISABLED"
+          dense
+          flat
+          round
+          icon="fa-solid fa-gear"
+        >
           <q-menu
+            persistent
+            v-model="appStore.showingMenu"
             style="width: max-content"
             transition-show="jump-down"
             transition-hide="jump-up"
@@ -75,11 +85,13 @@
               <q-separator vertical dark inset class="q-mx-lg" />
 
               <div class="column items-center">
-                <div class="text-h6 text-white q-mb-md">ORG AVAILABLE</div>
+                <div class="text-h6 text-white q-mb-md">AVAILABLE ORGS</div>
                 <q-list dark bordered separator style="max-width: 318px">
                   <q-item v-for="(el, ind) in appStore.orgsSetting" :id="ind">
                     <q-item-section>
-                      <q-item-label overline>{{ el.alias }}</q-item-label>
+                      <q-item-label overline>
+                        <b>{{ el.alias }}</b>
+                      </q-item-label>
                       <q-item-label style="overflow-wrap: break-word">{{
                         el.username
                       }}</q-item-label>
@@ -179,6 +191,7 @@ import EditType from "./pages/XMLPACKAGE/EditType.vue";
 import LoginDialog from "./pages/XMLPACKAGE/LoginDialog.vue";
 import TestJson from "./pages/XMLPACKAGE/TestJson.vue";
 import History from "./pages/XMLPACKAGE/History.vue";
+import NoCLIDialog from "./pages/XMLPACKAGE/NoCLIDialog.vue";
 import Desk from "./pages/XMLMERGE/Desk.vue";
 
 export default defineComponent({
@@ -220,6 +233,9 @@ export default defineComponent({
           type: "number", // optional
         },
       }).onOk((data) => {
+        if (data && !data.includes(".0")) {
+          data += ".0";
+        }
         localStorage.setItem("API_VERSION", data);
         appStore.apiVersion = data;
       });
@@ -262,12 +278,30 @@ export default defineComponent({
     this.mergeToolStore.$q = useQuasar();
     this.mergeToolStore.Notify = Notify;
 
-    this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
+    this.appStore.IS_CLI_INSTALLED(await window.myAPI.checkCliSFIstalled());
+    console.log("SF CLI INSTALLED ", this.appStore.CLIInstalled);
+
+    if (this.appStore.CLIInstalled) {
+      this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
+    }
 
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
     this.appStore.nameOperator = localStorage.getItem("NAME_OPERATOR");
     this.jsonTestStore.autoCopyJsonOnCreate =
       localStorage.getItem("AUTO_COPY_JSON_ON_CREATE") == "true" ? true : false;
+
+    if (!this.appStore.apiVersion || !this.appStore.nameOperator) {
+      Notify.create({
+        message:
+          "ATTENZIONE !! Imposta il tuo Nome e Cognome e la versione API di SFDC",
+        color: "red",
+        timeout: 300000,
+        position: "top-right",
+        closeBtn: true,
+        multiLine: true,
+        onDismiss: (this.appStore.showingMenu = true),
+      });
+    }
   },
   components: {
     XMLViewer,
@@ -278,6 +312,7 @@ export default defineComponent({
     AppChoser,
     History,
     Desk,
+    NoCLIDialog,
   },
   methods: {
     logout(data) {

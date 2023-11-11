@@ -498,6 +498,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
         this.metadataRetrieved.push(mdt.fullName);
       });
+      this.metadataRetrieved.sort();
     },
 
     ADD_COMMENT_LASTMODIFIED_ON_XML(data)

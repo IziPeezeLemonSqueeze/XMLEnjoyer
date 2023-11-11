@@ -28,7 +28,7 @@
         class="row full-width"
         style="place-content: center; align-items: center"
       >
-        <q-input v-model="AppStore.alias" label="ALIAS" />
+        <q-input v-model="AppStore.alias" dark label="ALIAS" />
 
         <q-option-group
           v-model="AppStore.selectedLoginUrl"

@@ -66,19 +66,19 @@
             right: 20%;
           "
         >
-          <q-badge outline align="middle" color="green">
+          <!--   <q-badge outline align="middle" color="green">
             Lavoro in corso presente
           </q-badge>
           <q-btn size="xs" icon="fa-solid fa-arrows-rotate" color="green" flat>
             <q-tooltip> Elimina e resetta il lavoro in corso </q-tooltip></q-btn
-          >
+          > -->
         </div>
       </q-card-actions>
     </q-card>
 
     <q-separator dark style="margin-top: 1%; margin-bottom: 1%" />
 
-    <q-card dark flat>
+    <q-card :disabled="true" dark flat>
       <div
         style="
           position: absolute;
@@ -145,12 +145,12 @@
             right: 20%;
           "
         >
-          <q-badge outline align="middle" color="green">
+          <!--   <q-badge outline align="middle" color="green">
             Lavoro in corso presente
           </q-badge>
           <q-btn size="xs" icon="fa-solid fa-arrows-rotate" color="green" flat>
             <q-tooltip> Elimina e resetta il lavoro in corso </q-tooltip></q-btn
-          >
+          > -->
         </div>
       </q-card-actions>
     </q-card>
@@ -169,7 +169,7 @@
       style="position: fixed; vertical-align: middle; bottom: 10px; left: 10px"
     >
       <q-badge outline align="middle" color="green">
-        Versione attuale: 0.8.0
+        Versione attuale: 0.9.0
       </q-badge>
     </div>
   </div>

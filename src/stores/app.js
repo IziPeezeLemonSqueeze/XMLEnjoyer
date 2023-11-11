@@ -4,6 +4,10 @@ import { useXMLViewerStore } from "./xml_viewer";
 export const useAppStore = defineStore("app", {
   state: () => ({
 
+    CLIInstalled: true,
+    CLIVersion: '',
+    CLIObsolete: true,
+
     appChoiced: false,
     appConfigured: [
       'XMLMERGE',
@@ -13,8 +17,8 @@ export const useAppStore = defineStore("app", {
     autoLaunchApp: '',
     firstLaunch: true,
 
-
-
+    showingMenu: false,
+    optionsMenuOk: false,
 
     folderStructure: [],
     xmlStore: useXMLViewerStore(),
@@ -39,6 +43,11 @@ export const useAppStore = defineStore("app", {
 
   }),
   actions: {
+
+    IS_CLI_INSTALLED(data)
+    {
+      this.CLIInstalled = data;
+    },
 
     UPDATE_AUTHORIZED_ORGS(data)
     {
@@ -76,6 +85,14 @@ export const useAppStore = defineStore("app", {
     GET_API_VERSION: (state) => state.apiVersion,
     GET_APP_CHOICED: (state) => state.appChoiced,
     GET_APP_ACTIVE: (state) => state.appActive,
-
+    GET_DIALOG_ACTIVE_BY_CLI_INSTALLED: (state) => !state.CLIInstalled,
+    GET_OPTION_MENU_DISABLED: (state) =>
+    {
+      if (!state.apiVersion || !state.nameOperator)
+      {
+        return false;
+      }
+      return true;
+    }
   }
 });

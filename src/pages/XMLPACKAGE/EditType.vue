@@ -43,13 +43,9 @@
         />
       </div>
       <q-card-section>
-        <q-list
-          :disable="XMLViewerStore.downloadingMDT"
-          bordered
-          separator
-          v-for="(el, index) in XMLViewerStore.nodeOnModify.members"
-        >
+        <q-list :disable="XMLViewerStore.downloadingMDT" bordered separator>
           <q-item
+            v-for="(el, index) in XMLViewerStore.nodeOnModify.members"
             :clickable="XMLViewerStore.downloadingMDT"
             v-ripple
             :key="index"
@@ -65,7 +61,7 @@
             <q-item-section>
               <q-popup-edit
                 :disable="XMLViewerStore.downloadingMDT"
-                :auto-save="false"
+                :auto-save="true"
                 style="width: 20%"
                 v-model="XMLViewerStore.nodeOnModify.members[index]['#text']"
                 v-slot="scope"
@@ -120,7 +116,10 @@
               @keyup.enter="scope.set"
             /> -->
             <q-select
-              :disable="XMLViewerStore.downloadingMDT"
+              :disable="
+                XMLViewerStore.downloadingMDT ||
+                XMLViewerStore.nodeOnModify.members.length > 0
+              "
               filled
               v-model="XMLViewerStore.nodeOnModify.name['#text']"
               use-input
@@ -169,7 +168,24 @@ export default {
       filterFn(val, update, abort) {
         update(() => {
           const needle = val.toLowerCase();
-          options.value = XMLViewerStore.metadataRetrieved.filter(
+
+          let nodeOnModData = [];
+
+          for (const mem of XMLViewerStore.nodeOnModify.members) {
+            if (mem["#text"] && mem["#text"] != "") {
+              nodeOnModData.push(mem["#text"]);
+            }
+          }
+
+          const mtdData = XMLViewerStore.metadataRetrieved.flatMap((mem) => {
+            console.log("mem", mem);
+            if (nodeOnModData.includes(mem)) {
+              return [];
+            }
+            return [mem];
+          });
+
+          options.value = mtdData.filter(
             (v) => v.toLowerCase().indexOf(needle) > -1
           );
         });
@@ -216,6 +232,10 @@ export default {
     },
     update() {
       this.XMLViewerStore.SET_METADATA_RETRIEVED();
+    },
+
+    logSelectedMember(value) {
+      console.log(value);
     },
   },
 };

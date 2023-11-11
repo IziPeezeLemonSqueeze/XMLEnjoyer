@@ -75,6 +75,11 @@ contextBridge.exposeInMainWorld("myAPI", {
   checkSfdxUpdate: async () =>
   {
     return await ipcRenderer.invoke('check-sfdx-update');
+  },
+
+  checkCliSFIstalled: async () =>
+  {
+    return await ipcRenderer.invoke('check-cli-installed');
   }
 
 

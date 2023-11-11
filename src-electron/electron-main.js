@@ -6,7 +6,9 @@ const fs = require('fs');
 import { exec, execSync } from "child_process";
 
 
-import installExtension, { VUEJS3_DEVTOOLS } from "electron-devtools-installer";
+import installExtension, {
+  VUEJS_DEVTOOLS
+} from "electron-devtools-installer";
 var { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
@@ -22,7 +24,7 @@ try
 
 let mainWindow;
 
-function createWindow()
+async function createWindow()
 {
   /**
    * Initial window options
@@ -51,14 +53,17 @@ function createWindow()
     // if on DEV or Production with debug enabled
     try
     {
-      installExtension(["nhdogjmejiglipccpnnnanhbledajbpd"])
+      installExtension("nhdogjmejiglipccpnnnanhbledajbpd")
         .then((name) => console.log(`Added Extension:  ${name}`))
         .catch((err) => console.log("An error occurred: ", err));
+      await installExtension(VUEJS3_DEVTOOLS);
+
     } catch (e)
     {
       console.log(e);
     }
     mainWindow.webContents.openDevTools();
+
   } else
   {
     // we're on production; no access to devtools pls
@@ -193,15 +198,80 @@ ipcMain.handle('auth-list', async () =>
 
   const util = require('node:util');
   const execc = util.promisify(require('node:child_process').exec);
-  const { stdout, stderr } = await execc(
-    'sf org list auth --json', {
-    maxBuffer: 1024 * 1024 * 8,
-  });
-  let bufferData = stdout;
+  try
+  {
+    const { stdout, stderr } = await execc(
+      'sf org list auth --json', {
+      maxBuffer: 1024 * 1024 * 8,
+    });
+    if (stdout === '' || !stdout)
+    {
+      console.log('ERROR GET AUTH LIST ORG : ', stderr);
+      return null;
+    }
+    let bufferData = stdout;
 
-  return JSON.parse(bufferData);
+    return JSON.parse(bufferData);
+  } catch (e)
+  {
+    const { stdout, stderr } = await execc(
+      'sfdx org list auth --json', {
+      maxBuffer: 1024 * 1024 * 8,
+    });
+    if (stdout === '' || !stdout)
+    {
+      console.log('ERROR GET AUTH LIST ORG : ', stderr);
+      return null;
+    }
+    let bufferData = stdout;
 
+    return JSON.parse(bufferData);
+  }
 });
+
+
+ipcMain.handle('check-cli-installed', async (value, ...args) =>
+{
+  let cliFounded = false;
+  try
+  {
+    const util = require('node:util');
+    const execc = util.promisify(require('node:child_process').exec);
+    const { stdout, stderr } = await execc(
+      'sfdx', {
+      maxBuffer: 1024 * 1024 * 8,
+    });
+    if (stdout)
+    {
+      //  console.log('CHECK SF LOG : ', stdout);
+      cliFounded = true;
+    }
+  } catch (e) { cliFounded = false; }
+
+  if (cliFounded)
+  {
+    return cliFounded;
+  }
+
+  try
+  {
+    const util = require('node:util');
+    const execc = util.promisify(require('node:child_process').exec);
+    const { stdout, stderr } = await execc(
+      'sf', {
+      maxBuffer: 1024 * 1024 * 8,
+    });
+    if (stdout)
+    {
+      console.log('CHECK SF LOG : ', stdout);
+      cliFounded = true;
+    }
+  } catch (e) { cliFounded = false; }
+
+  return cliFounded;
+});
+
+
 
 ipcMain.handle('logout-org', (value, ...args) =>
 {
@@ -353,7 +423,22 @@ ipcMain.handle('check-sfdx-update', async (value, ...args) =>
     'sfdx -v ', {
     maxBuffer: 1024 * 1024 * 8,
   });
-  console.log(stdout);
-  let bufferData = stdout;
+  let bufferData;
+  if (stdout)
+  {
+    console.log('CHECK VERSION LOG : ', stdout);
+    if (stdout.includes('sfdx-cli/'))
+    {
+      bufferData = { version: stdout.substring(9, 17), obsoleteVersion: true };
+    } else if (stdout.includes('@salesforce/cli/'))
+    {
+      bufferData = { version: stdout.substring(16, 23), obsoleteVersion: false };
+    }
+    return bufferData;
+  } else
+  {
+    console.log('ERROR : CHECK VERSION LOG : ', stdout);
+    bufferData = stderr;
+  }
   return bufferData;
 });

@@ -330,17 +330,19 @@
     <div
       style="position: fixed; vertical-align: middle; bottom: 10px; right: 10px"
     >
-      <q-badge outline align="middle" color="primary">
-        SFDX: 7.196.9
-
-        <!--  <q-icon
-          name="fa-solid fa-caret-up"
-          style="margin-left: 5%; margin-right: 10%"
-        >
-          <q-tooltip>
-            sfdx-cli update available from 7.196.9 to 7.200.7
-          </q-tooltip>
-        </q-icon> -->
+      <q-badge
+        outline
+        align="middle"
+        :color="this.AppStore.CLIObsolete ? 'red' : 'primary'"
+        @click="this.AppStore.CLIObsolete ? openSFUpdateClIPage : null"
+      >
+        {{ this.AppStore.CLIObsolete ? "SFDX:" : "SF:" }}
+        {{ this.AppStore.CLIVersion }}
+        <q-tooltip v-if="this.AppStore.CLIObsolete ? true : false">
+          SFDX CLI è obsoleta, si consiglia di installare una versione più
+          aggiornata! Clicca qui per aprire la pagina Salesforce per la
+          procedura di aggiornamento!
+        </q-tooltip>
       </q-badge>
     </div>
   </div>
@@ -360,7 +362,6 @@ export default {
   setup() {
     let notifyDismissDownloadMDT = null;
     let xmlText = null;
-    let sfdxVersion = null;
 
     const $q = useQuasar();
     const XMLViewerStore = useXMLViewerStore();
@@ -374,7 +375,6 @@ export default {
 
     return {
       xmlText,
-      sfdxVersion,
       XMLViewerStore,
       MergeToolStore,
       AppStore,
@@ -438,8 +438,10 @@ export default {
       });
     }
 
-    this.sfdxVersion = window.myAPI.checkSfdxUpdate();
-    console.log(await this.sfdxVersion);
+    const CLIData = await window.myAPI.checkSfdxUpdate();
+    this.AppStore.CLIVersion = CLIData.version;
+    this.AppStore.CLIObsolete = CLIData.obsoleteVersion;
+    console.log(await this.AppStore.CLIVersion);
 
     this.XMLViewerStore.$subscribe((mutation, state) => {
       switch (mutation.events.key) {
@@ -574,6 +576,11 @@ export default {
         this.JsonTestStore.statusApexClasses = false;
         this.JsonTestStore.bodyJson = "Non ci sono classi Apex nel XML";
       }
+    },
+    openSFUpdateClIPage() {
+      window.open(
+        "https://developer.salesforce.com/docs/atlas.en-us.sfdx_setup.meta/sfdx_setup/sfdx_setup_move_to_sf_v2.htm"
+      );
     },
     /*
     _notifyDownloadFromOrgMDT() {
