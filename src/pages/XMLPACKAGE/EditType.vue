@@ -6,10 +6,10 @@
       style="width: -webkit-fill-available"
     >
       <q-toolbar>
-        <q-icon size="md" name="fa-solid fa-object-group" />
+        <q-icon size="md" name="fa-solid fa-code" />
 
         <q-toolbar-title
-          ><span class="text-weight-bold">Modify</span> types</q-toolbar-title
+          ><span class="text-weight-bold">Modify</span> TYPES</q-toolbar-title
         >
         <q-btn
           flat
@@ -61,23 +61,23 @@
             <q-item-section>
               <q-popup-edit
                 :disable="XMLViewerStore.downloadingMDT"
-                :auto-save="true"
+                :auto-save="false"
                 style="width: 20%"
                 v-model="XMLViewerStore.nodeOnModify.members[index]['#text']"
                 v-slot="scope"
               >
-                <!--   <q-input
+                <q-input
+                  v-if="!AppStore.selectedOrg"
                   v-model="scope.value"
                   dense
                   autofocus
-                  counter
-                  debounce="10"
+                  hint="Premi INVIO per salvare"
                   @keyup.enter="scope.set"
-                  @update="filterFn"
-                ></q-input> -->
+                ></q-input>
                 <q-select
-                  filled
+                  v-if="AppStore.selectedOrg"
                   v-model="el['#text']"
+                  filled
                   use-input
                   hide-selected
                   fill-input
@@ -204,7 +204,9 @@ export default {
   methods: {
     async updatedTypeName() {
       if (this.AppStore.selectedOrg != null) {
-        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(
+          this.AppStore.GET_SELECTED_ORG
+        );
 
         if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
           this.XMLViewerStore.lastMetadataRetrievied = null;

@@ -71,6 +71,7 @@
                   @click="setApi"
                 />
                 <q-separator dark spaced />
+                <br />
                 <q-toggle
                   v-model="autoCopyJsonTest"
                   @click="updateAutoCopyJsonOnCreate"
@@ -79,6 +80,25 @@
                   color="white"
                   style="color: white"
                   label="Abilita il copia automatico del JSON Test creato"
+                />
+                <br />
+                <q-separator dark spaced />
+                <br />
+                <q-input
+                  dense
+                  dark
+                  readonly
+                  v-model="appStore.excelDocumentLink"
+                  label="Link EXCEL - Tracciamento Attività"
+                />
+                <q-btn
+                  dense
+                  dark
+                  flat
+                  class="text-white"
+                  label="SET LINK EXCEL DOC"
+                  style="padding: 1%; margin: 5%"
+                  @click="setExcelDocumentLink"
                 />
               </div>
 
@@ -220,6 +240,7 @@ export default defineComponent({
         appStore.nameOperator = data;
       });
     }
+
     function setApi() {
       //console.log($q);
       $q.dialog({
@@ -241,6 +262,25 @@ export default defineComponent({
       });
     }
 
+    function setExcelDocumentLink() {
+      //console.log($q);
+      $q.dialog({
+        title: "EXCEL DOC - Tracciamento Attività",
+        message: "SET LINK EXCEL DOC",
+        dark: true,
+        cancel: true,
+        persistent: true,
+        prompt: {
+          model: "",
+        },
+      }).onOk((data) => {
+        if (data && (data.includes(".com") || data.includes(".it"))) {
+          localStorage.setItem("EXCEL_DOC_LINK", data);
+          appStore.excelDocumentLink = data;
+        }
+      });
+    }
+
     return {
       appStore,
       historyStore,
@@ -248,6 +288,7 @@ export default defineComponent({
       mergeToolStore,
       jsonTestStore,
       setApi,
+      setExcelDocumentLink,
       setNameOperator,
     };
   },
@@ -285,6 +326,7 @@ export default defineComponent({
       this.appStore.UPDATE_AUTHORIZED_ORGS(await window.myAPI.getAuthList());
     }
 
+    this.appStore.excelDocumentLink = localStorage.getItem("EXCEL_DOC_LINK");
     this.appStore.apiVersion = localStorage.getItem("API_VERSION");
     this.appStore.nameOperator = localStorage.getItem("NAME_OPERATOR");
     this.jsonTestStore.autoCopyJsonOnCreate =

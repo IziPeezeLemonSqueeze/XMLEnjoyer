@@ -89,6 +89,7 @@
         "
       >
         <q-checkbox
+          :disable="true"
           color="blue-3"
           true-value="XMLMERGE"
           :false-value="''"
@@ -130,6 +131,7 @@
 
       <q-card-actions style="justify-content: center">
         <q-btn
+          :disabled="true"
           color="blue-3"
           push
           style="width: 125px"
@@ -169,7 +171,7 @@
       style="position: fixed; vertical-align: middle; bottom: 10px; left: 10px"
     >
       <q-badge outline align="middle" color="green">
-        Versione attuale: 0.9.0
+        Versione attuale: 0.9.1
       </q-badge>
     </div>
   </div>

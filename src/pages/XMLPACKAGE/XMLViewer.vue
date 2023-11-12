@@ -331,14 +331,15 @@
       style="position: fixed; vertical-align: middle; bottom: 10px; right: 10px"
     >
       <q-badge
+        :class="this.AppStore.CLIObsolete ? 'pulse cursor-pointer' : null"
         outline
         align="middle"
         :color="this.AppStore.CLIObsolete ? 'red' : 'primary'"
-        @click="this.AppStore.CLIObsolete ? openSFUpdateClIPage : null"
+        @click="this.AppStore.CLIObsolete ? openSFUpdateClIPage() : null"
       >
         {{ this.AppStore.CLIObsolete ? "SFDX:" : "SF:" }}
         {{ this.AppStore.CLIVersion }}
-        <q-tooltip v-if="this.AppStore.CLIObsolete ? true : false">
+        <q-tooltip v-if="this.AppStore.CLIObsolete">
           SFDX CLI è obsoleta, si consiglia di installare una versione più
           aggiornata! Clicca qui per aprire la pagina Salesforce per la
           procedura di aggiornamento!
@@ -498,7 +499,9 @@ export default {
         );
       } else {
         //this._notifyDownloadFromOrgMDT(); TODO
-        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(
+          this.AppStore.GET_SELECTED_ORG
+        );
 
         //localStorage.setItem("MDT_TEMP", []);
         if (this.AppStore.GET_SELECTED_ORG != this.AppStore.lastActiveOrg) {
@@ -544,7 +547,9 @@ export default {
         this.JsonTestStore.statusApexClasses = true;
 
         //this._notifyDownloadFromOrgMDT(); TODO
-        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT();
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(
+          this.AppStore.GET_SELECTED_ORG
+        );
 
         this.XMLViewerStore.SET_METADATA_RETRIEVED(
           await window.myAPI.retrieveMetadata({
@@ -604,5 +609,18 @@ export default {
 .card-hover {
   border-width: 5px;
   border-color: chartreuse;
+}
+
+.pulse {
+  animation: pulse-animation 2s infinite;
+}
+
+@keyframes pulse-animation {
+  0% {
+    box-shadow: 0 0 0 0px rgba(255, 0, 0, 0.8);
+  }
+  100% {
+    box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
+  }
 }
 </style>

@@ -518,11 +518,11 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       };
     },
 
-    CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT()
+    CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(data)
     {
       this.downloadingMDT = true;
       this.notifyDismissDownloadMDT = this.Notify.create({
-        message: "Scarico Metadata dalla ORG...",
+        message: `Scarico Metadata dalla ORG ${data}`,
         color: "blue",
         timeout: 0,
         position: "bottom",

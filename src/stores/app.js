@@ -39,7 +39,9 @@ export const useAppStore = defineStore("app", {
     optionLoginUrl: [
       { label: 'SANDBOX', value: 'https://test.salesforce.com/', },
       { label: 'PRODUCTION', value: 'https://login.salesforce.com/' }
-    ]
+    ],
+
+    excelDocumentLink: '',
 
   }),
   actions: {
