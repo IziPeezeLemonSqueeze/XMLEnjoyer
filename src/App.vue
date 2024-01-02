@@ -1,158 +1,12 @@
 <template class="unselectable">
   <q-layout>
     <q-header reveal elevated class="bg-blue-3 text-white" height-hint="98">
-      <q-toolbar>
-        <q-toolbar-title style="-webkit-app-region: drag">
-          <q-avatar>
-            <img src="https://i.postimg.cc/XqdmjGqf/logo3.png" />
-          </q-avatar>
-          {{ "< XML Enjoyer @Salesforce >" }}
-        </q-toolbar-title>
-        <NoCLIDialog />
-        <q-select
-          :disable="!appStore.GET_OPTION_MENU_DISABLED"
-          dense
-          dark
-          standout="bg-blue-3 text-white"
-          v-model="setOrgSelection"
-          :options="appStore.orgs"
-          label="Select ORG"
-          bg-color="blue"
-          style="margin-right: 1%; width: 150px"
-        />
-        <q-btn
-          :disable="!appStore.GET_OPTION_MENU_DISABLED"
-          dense
-          flat
-          round
-          icon="fa-solid fa-gear"
-        >
-          <q-menu
-            persistent
-            v-model="appStore.showingMenu"
-            style="width: max-content"
-            transition-show="jump-down"
-            transition-hide="jump-up"
-          >
-            <div class="bg-blue-3 row no-wrap q-pa-md">
-              <div class="column">
-                <div class="text-h6 text-white q-mb-md">Settings</div>
-                <q-input
-                  dense
-                  dark
-                  readonly
-                  v-model="appStore.nameOperator"
-                  label="Nome Cognome"
-                />
-                <q-btn
-                  dense
-                  dark
-                  flat
-                  class="text-white"
-                  label="SET NOME E COGNOME"
-                  style="padding: 1%; margin: 5%"
-                  @click="setNameOperator"
-                />
-                <q-separator dark spaced />
-                <q-input
-                  dense
-                  dark
-                  readonly
-                  v-model="appStore.apiVersion"
-                  label="API Version"
-                />
-                <q-btn
-                  dense
-                  dark
-                  flat
-                  class="text-white"
-                  label="SET API VERSION"
-                  style="padding: 1%; margin: 5%"
-                  @click="setApi"
-                />
-                <q-separator dark spaced />
-                <br />
-                <q-toggle
-                  v-model="autoCopyJsonTest"
-                  @click="updateAutoCopyJsonOnCreate"
-                  dark
-                  dense
-                  color="white"
-                  style="color: white"
-                  label="Abilita il copia automatico del JSON Test creato"
-                />
-                <br />
-                <q-separator dark spaced />
-                <br />
-                <q-input
-                  dense
-                  dark
-                  readonly
-                  v-model="appStore.excelDocumentLink"
-                  label="Link EXCEL - Tracciamento Attività"
-                />
-                <q-btn
-                  dense
-                  dark
-                  flat
-                  class="text-white"
-                  label="SET LINK EXCEL DOC"
-                  style="padding: 1%; margin: 5%"
-                  @click="setExcelDocumentLink"
-                />
-              </div>
-
-              <q-separator vertical dark inset class="q-mx-lg" />
-
-              <div class="column items-center">
-                <div class="text-h6 text-white q-mb-md">AVAILABLE ORGS</div>
-                <q-list dark bordered separator style="max-width: 318px">
-                  <q-item v-for="(el, ind) in appStore.orgsSetting" :id="ind">
-                    <q-item-section>
-                      <q-item-label overline>
-                        <b>{{ el.alias }}</b>
-                      </q-item-label>
-                      <q-item-label style="overflow-wrap: break-word">{{
-                        el.username
-                      }}</q-item-label>
-                    </q-item-section>
-                    <q-item-section avatar>
-                      <q-btn
-                        dense
-                        flat
-                        color="red-4"
-                        icon="fa-solid fa-right-from-bracket"
-                        @click="
-                          logout({ username: el.username, alias: el.alias })
-                        "
-                      />
-                    </q-item-section>
-                  </q-item>
-                  <q-item
-                    dense
-                    clickable
-                    v-ripple
-                    @click="appStore.dialogLogin = true"
-                  >
-                    <q-item-section class="text-bold">
-                      AUTHORIZE NEW ORG
-                    </q-item-section>
-                    <q-item-section avatar>
-                      <q-icon dense color="green" name="fa-solid fa-plus" />
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </div>
-            </div>
-          </q-menu>
-        </q-btn>
-        <q-separator dark spaced vertical />
-        <q-btn dense flat icon="minimize" @click="minimizeApp" />
-        <q-btn dense flat icon="crop_square" @click="maximizeApp" />
-        <q-btn dense flat icon="close" @click="quitApp" />
-      </q-toolbar>
+      <NoCLIDialog />
     </q-header>
-    <q-page-container class="bg-grey-10 full-width">
+    <q-page-container
+      class="full-width"
+      style="background-color: #132d47; border-radius: 20px"
+    >
       <q-page class="row full-width">
         <div
           v-if="!appStore.GET_APP_CHOICED"
@@ -166,7 +20,8 @@
           v-else-if="appStore.GET_APP_ACTIVE == 'XMLPACKAGE'"
         >
           <div class="row full-width">
-            <History />
+            <!-- <History /> -->
+            <LateralMenu />
             <XMLViewer />
           </div>
           <MergeVue />
@@ -210,9 +65,10 @@ import MergeVue from "./pages/XMLPACKAGE/Merge.vue";
 import EditType from "./pages/XMLPACKAGE/EditType.vue";
 import LoginDialog from "./pages/XMLPACKAGE/LoginDialog.vue";
 import TestJson from "./pages/XMLPACKAGE/TestJson.vue";
-import History from "./pages/XMLPACKAGE/History.vue";
 import NoCLIDialog from "./pages/XMLPACKAGE/NoCLIDialog.vue";
 import Desk from "./pages/XMLMERGE/Desk.vue";
+/* import History from "./pages/XMLPACKAGE/History.vue"; */
+import LateralMenu from "./pages/XMLPACKAGE/LateralMenu.vue";
 
 export default defineComponent({
   name: "App",
@@ -224,86 +80,15 @@ export default defineComponent({
     const mergeToolStore = useMergeToolStore();
     const jsonTestStore = useTestJson();
 
-    function setNameOperator() {
-      //console.log($q);
-      $q.dialog({
-        title: "Nome e Cognome",
-        message: "",
-        dark: true,
-        cancel: true,
-        persistent: true,
-        prompt: {
-          model: "",
-        },
-      }).onOk((data) => {
-        localStorage.setItem("NAME_OPERATOR", data);
-        appStore.nameOperator = data;
-      });
-    }
-
-    function setApi() {
-      //console.log($q);
-      $q.dialog({
-        title: "API VERSION",
-        message: "SET API VERSION",
-        dark: true,
-        cancel: true,
-        persistent: true,
-        prompt: {
-          model: "",
-          type: "number", // optional
-        },
-      }).onOk((data) => {
-        if (data && !data.includes(".0")) {
-          data += ".0";
-        }
-        localStorage.setItem("API_VERSION", data);
-        appStore.apiVersion = data;
-      });
-    }
-
-    function setExcelDocumentLink() {
-      //console.log($q);
-      $q.dialog({
-        title: "EXCEL DOC - Tracciamento Attività",
-        message: "SET LINK EXCEL DOC",
-        dark: true,
-        cancel: true,
-        persistent: true,
-        prompt: {
-          model: "",
-        },
-      }).onOk((data) => {
-        if (data && (data.includes(".com") || data.includes(".it"))) {
-          localStorage.setItem("EXCEL_DOC_LINK", data);
-          appStore.excelDocumentLink = data;
-        }
-      });
-    }
-
     return {
       appStore,
       historyStore,
       xmlStore,
       mergeToolStore,
       jsonTestStore,
-      setApi,
-      setExcelDocumentLink,
-      setNameOperator,
     };
   },
   computed: {
-    setOrgSelection: {
-      get() {
-        return this.appStore.selectedOrg;
-      },
-      set(org) {
-        this.appStore.selectedOrg = org;
-        this.appStore.lastActiveOrg == null
-          ? (this.appStore.lastActiveOrg = org)
-          : null;
-      },
-    },
     autoCopyJsonTest: {
       get() {
         return this.jsonTestStore.autoCopyJsonOnCreate;
@@ -352,7 +137,8 @@ export default defineComponent({
     LoginDialog,
     TestJson,
     AppChoser,
-    History,
+    /*   History, */
+    LateralMenu,
     Desk,
     NoCLIDialog,
   },
@@ -369,6 +155,7 @@ export default defineComponent({
       );
     },
 
+    /*
     minimizeApp() {
       window.myAPI.minimizeApp();
     },
@@ -380,6 +167,7 @@ export default defineComponent({
     quitApp() {
       window.myAPI.quitApp();
     },
+    */
 
     updateAutoCopyJsonOnCreate() {
       localStorage.setItem(

@@ -31,12 +31,15 @@ async function createWindow()
    */
   mainWindow = new BrowserWindow({
     icon: path.resolve(__dirname, "icons/icon.png"), // tray icon
+
+    transparent: true,
     titleBarStyle: 'hidden',
-    titleBarOverlay: false,
+    backgroundColor: '#00FFFFFF',
+    frame: false,
     width: 1450,
     height: 1001,
     resizable: false,
-    useContentSize: true,
+    useContentSize: false,
     webPreferences: {
       enableRemoteModule: false,
       contextIsolation: true,
@@ -45,6 +48,8 @@ async function createWindow()
       preload: path.resolve(__dirname, process.env.QUASAR_ELECTRON_PRELOAD),
     },
   });
+
+
 
   mainWindow.loadURL(process.env.APP_URL);
 

@@ -247,28 +247,19 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       this.textFile = data.toString();
     },
 
+    GENERATE_NEW_EMPTY_XML()
+    {
+      this.parsedFile.push({ "uuid": crypto.randomUUID(), "closing": false, "checked": false, "openInfo": false, "hover": false, "index": this.parsedFile.length + 1, "nameFile": crypto.randomUUID(), "pathFile": null, "text": null, "parsed": { "?xml": { "@_version": "1.0", "@_encoding": "UTF-8", "@_standalone": "yes" }, "Package": { "types": [{ "members": [], "name": { "#text": "CHANGE_ME" } }], "version": { "#text": this.appStore.apiVersion }, "@_xmlns": "http://soap.sforce.com/2006/04/metadata" }, "#comment": { "#text": "" } } })
+
+    },
+
     SET_FILE(data)
     {
       console.log('DATA FROM FILE', data);
       const fr = new FileReader();
-      fr.onloadend = async (end) =>
-      {
-        this._CREATE_XML({ data: data, end: end });
-      };
 
-      if (!data.name)
+      if (data.includes('<?xml'))
       {
-        if (!data.includes('<Package') ||
-          !data.includes('xmlns="http://soap.sforce.com'))
-        {
-          this.Notify.create({
-            message:
-              "XML NON VALIDO!",
-            color: "red",
-            timeout: 3000,
-          });
-          return;
-        }
         this._CREATE_XML({
           data:
           {
@@ -277,16 +268,22 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
           },
           end: { target: { result: data } }
         });
-      } else
+      } else if (data[0].type === 'text/xml')
       {
-        fr.readAsText(data);
-        console.log('FILE');
+        fr.readAsText(data[0]);
+        console.log('FILE READ');
+        fr.onload = async () =>
+        {
+          console.log('END', fr.result);
+          this._CREATE_XML({ data: data, end: { target: { result: fr.result } } });
+        };
+
       }
     },
 
-    _CREATE_XML(data)
+    _CREATE_XML(data, fromClip)
     {
-      console.log(data);
+      console.log('CREATE XML', data);
       let parser = new XMLParser({
         alwaysCreateTextNode: true,
         ignoreAttributes: false,

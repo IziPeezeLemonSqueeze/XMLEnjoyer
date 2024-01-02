@@ -1,6 +1,7 @@
 <template>
   <div class="col full-width">
-    <div class="row q-ma-md">
+    <!--     <div class="row q-ma-md">
+
       <q-file
         dark
         color="white"
@@ -38,9 +39,95 @@
         </q-tooltip></q-btn
       >
     </div>
-    <q-separator dark />
-    <q-scroll-area horizontal style="height: 830px" class="full-width">
-      <div class="row no-wrap q-pa-sm text-pre-wrap">
+    <q-separator dark /> -->
+    <div
+      style="
+        position: absolute;
+        left: 10%;
+        font-family: 'Font Awesome 5 Brands';
+        top: 2%;
+        font-size: x-large;
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+      "
+      class="text-white"
+    >
+      X M L - E N J O Y E R
+    </div>
+    <div
+      style="
+        position: absolute;
+        left: 28%;
+        font-family: 'Font Awesome 5 Brands';
+        top: 3%;
+        font-size: medium;
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+      "
+      class="text-white"
+    >
+      v 1.0
+    </div>
+    <div
+      v-if="AppStore.selectedOrg ? true : false"
+      style="
+        position: absolute;
+        left: 35%;
+        font-family: 'Font Awesome 5 Brands';
+        top: 2%;
+        font-size: x-large;
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+      "
+      class="text-white"
+    >
+      <q-icon name="img:salesforce.svg" size="1.8em" /> :
+      {{ AppStore.selectedOrg }}
+    </div>
+    <div
+      v-if="!AppStore.selectedOrg ? true : false"
+      style="
+        position: absolute;
+        left: 35%;
+        font-family: 'Font Awesome 5 Brands';
+        top: 2%;
+        font-size: x-large;
+        -webkit-app-region: drag;
+        -webkit-user-select: none;
+      "
+      class="text-orange"
+    >
+      <q-icon name="img:salesforce.svg" size="1.8em" /> : N O - O R G
+    </div>
+    <q-scroll-area
+      horizontal
+      style="height: 850px; margin: 5% 0% 0% 1%"
+      class=""
+    >
+      <div class="row no-wrap q-pa-sm text-pre-wrap" style="margin-right: 3%">
+        <q-card
+          v-bind="getRootProps()"
+          class="text-white"
+          :style="
+            isDragActive
+              ? 'background: #3988D7;text-align: center;display: flex;border-width: 3px;border-style: dashed;margin-left: 0.5%;position: sticky;min-width: 350px;border-radius: 10px;max-width: 350px;max-height: 658px;min-height: 658px;top: 1.9%;flex-flow: column;align-items: center;justify-content: center;'
+              : 'background: transparent; text-align: center; display: flex; border-width: 3px; border-style: dashed; margin-left: 0.5%; position: sticky; min-width: 350px; border-radius: 10px; max-width: 350px; max-height: 658px; min-height: 658px; top: 1.9%; flex-flow: column; align-items: center; justify-content: center;'
+          "
+        >
+          <q-card-section>
+            <div class="text-h7">CLICK + TO CREATE NEW EMPTY PACKAGE</div>
+            <q-btn
+              style="margin: 5%"
+              rounded
+              dense
+              dark
+              @click="XMLViewerStore.GENERATE_NEW_EMPTY_XML"
+            >
+              <q-icon name="fa-solid fa-plus" size="3em" />
+            </q-btn>
+            <div class="text-h7">OR DROP HERE PACKAGE.XML</div>
+          </q-card-section>
+        </q-card>
         <draggable
           class="row no-wrap dropArea"
           :list="XMLViewerStore.parsedFile"
@@ -48,7 +135,7 @@
           easing="cubic-bezier(1, 0, 0, 1)"
         >
           <div
-            style="min-width: 350px"
+            style="font-family: 'Roboto Flex'"
             v-for="(item, index) in XMLViewerStore.parsedFile"
             :key="index"
           >
@@ -60,12 +147,12 @@
                 item.hover
                   ? item.parsed['Package']['@_xmlns']
                     ? item.parsed['Package']['@_xmlns'].includes('sforce')
-                      ? 'bg-blue-3 q-pa-sm q-ma-sm shadow-20 card-hover '
+                      ? 'bg-blue-4 q-pa-sm q-ma-sm shadow-20 card-hover '
                       : 'bg-grey-5 q-pa-sm q-ma-sm card-hover shadow-20'
                     : 'bg-grey-5 q-pa-sm q-ma-sm card-hover shadow-20'
                   : item.parsed['Package']['@_xmlns']
                   ? item.parsed['Package']['@_xmlns'].includes('sforce')
-                    ? 'bg-blue-3 q-pa-sm q-ma-sm shadow-20'
+                    ? 'bg-blue-4 q-pa-sm q-ma-sm shadow-20'
                     : 'bg-grey-5 q-pa-sm q-ma-sm shadow-20'
                   : 'bg-grey-5 q-pa-sm q-ma-sm shadow-20'
               "
@@ -354,6 +441,7 @@ import { useMergeToolStore } from "src/stores/mergeTool";
 import { useXMLViewerStore } from "src/stores/xml_viewer";
 import { useTestJson } from "src/stores/testJson";
 
+import { useDropzone } from "vue3-dropzone";
 import { VueDraggableNext } from "vue-draggable-next";
 import { useClipboard, usePermission } from "@vueuse/core";
 import { useQuasar, Notify } from "quasar";
@@ -374,6 +462,25 @@ export default {
     const permissionRead = usePermission("clipboard-read");
     const permissionWrite = usePermission("clipboard-write");
 
+    const { getRootProps, getInputProps, ...rest } = useDropzone({
+      accept: ".xml",
+      onDrop,
+      multiple: false,
+      onDropAccepted: dropNewFile,
+      onDropRejected: failedDropNewFile,
+    });
+    function onDrop(acceptFiles, rejectReasons) {
+      console.log(acceptFiles);
+      console.log(rejectReasons);
+    }
+    function dropNewFile(file) {
+      console.log("DROP NEW FILE", file);
+      XMLViewerStore.SET_FILE(file);
+    }
+
+    function failedDropNewFile(file) {
+      console.log("FAIL DROP, REJECTED");
+    }
     return {
       xmlText,
       XMLViewerStore,
@@ -387,6 +494,9 @@ export default {
       permissionWrite,
       isSupported,
       notifyDismissDownloadMDT,
+      getRootProps,
+      getInputProps,
+      ...rest,
     };
   },
   computed: {
@@ -455,15 +565,17 @@ export default {
 
     this._keyListener = async function (e) {
       if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault(); // present "Save Page" from getting triggered.
+        //e.preventDefault(); // present "Save Page" from getting triggered.
 
         this.text = await window.myAPI.getExternalClipboard();
         this.XMLViewerStore.SET_FILE(this.text);
-        console.log("CONTROL V");
+        console.log("CONTROL V", this.text);
+        this.text = null;
       } else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault(); // present "Save Page" from getting triggered.
+        this.text = null;
         this.copy(this.MergeToolStore.EXPORT_XML());
-        console.log("CONTROL C");
+        console.log("CONTROL C", this.text);
       }
     };
 
@@ -533,10 +645,10 @@ export default {
       this.XMLViewerStore.ADD_COMMENT_LASTMODIFIED_ON_XML(data.parsedFileIndex);
     },
 
-    savePackage() {
+    /*     savePackage() {
       let xml = this.MergeToolStore.EXPORT_XML();
       window.myAPI.savePackage(xml);
-    },
+    }, */
 
     async initJsonTest(data) {
       let existApexClasses = this.XMLViewerStore.parsedFile[data].parsed[
@@ -622,5 +734,14 @@ export default {
   100% {
     box-shadow: 0 0 0 10px rgba(255, 0, 0, 0);
   }
+}
+
+@font-face {
+  font-family: "Roboto Flex";
+  font-style: normal;
+  font-weight: 100 1000;
+  font-stretch: 0% 200%;
+  src: url(https://fonts.gstatic.com/s/robotoflex/v9/NaNeepOXO_NexZs0b5QrzlOHb8wCikXpYqmZsWI-__OGfttPZktqc2VdZ80KvCLZaPcSBZtOx2MifRuWR28sPJtUMbsFEK6cRrleUx9Xgbm3WLHa_F4Ep4Fm0PN19Ik5Dntczx0wZGzhPlL1YNMYKbv9_1IQXOw7AiUJVXpRJ6cXW4O8TNGoXjC79QRyaLshNDUf9-EmFw.woff2)
+    format("woff2");
 }
 </style>
