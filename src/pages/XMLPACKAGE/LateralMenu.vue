@@ -32,7 +32,7 @@
           <q-menu
             persistent
             v-model="appStore.showingMenu"
-            style="width: max-content"
+            style="width: max-content; border-radius: 20px"
             transition-show="jump-down"
             transition-hide="jump-up"
           >
@@ -166,7 +166,7 @@
         <q-btn flat dark>
           <q-icon size="2.5em" name="img:salesforce.svg" />
           <q-menu
-            style="width: max-content"
+            style="width: max-content; border-radius: 20px"
             transition-show="jump-down"
             transition-hide="jump-up"
           >
@@ -217,7 +217,7 @@
             style="background-color: #132d47"
             :offset="[10, 10]"
           >
-            Esporta XML
+            Export XML
           </q-tooltip></q-btn
         >
         <q-btn
@@ -233,9 +233,21 @@
             style="background-color: #132d47"
             :offset="[10, 10]"
           >
-            Unisci XML
+            Merge XML
           </q-tooltip></q-btn
         >
+      </q-card-section>
+      <q-card-section>
+        <q-btn
+          dense
+          push
+          href="https://www.buymeacoffee.com/IziPeezeLemonSqueeze"
+          target="_blank"
+          ><img
+            src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png"
+            alt="Buy Me A Coffee"
+            style="height: 30px !important; width: 110px !important"
+        /></q-btn>
       </q-card-section>
     </q-card>
   </div>
@@ -328,6 +340,14 @@ export default defineComponent({
     };
   },
   computed: {
+    autoCopyJsonTest: {
+      get() {
+        return this.jsonTestStore.autoCopyJsonOnCreate;
+      },
+      set(data) {
+        this.jsonTestStore.autoCopyJsonOnCreate = data;
+      },
+    },
     dialogMerge: {
       get() {
         return this.XMLViewerStore.dialogMerge;
@@ -361,6 +381,13 @@ export default defineComponent({
     savePackage() {
       let xml = this.MergeToolStore.EXPORT_XML();
       window.myAPI.savePackage(xml);
+    },
+
+    updateAutoCopyJsonOnCreate() {
+      localStorage.setItem(
+        "AUTO_COPY_JSON_ON_CREATE",
+        this.jsonTestStore.autoCopyJsonOnCreate
+      );
     },
   },
 });

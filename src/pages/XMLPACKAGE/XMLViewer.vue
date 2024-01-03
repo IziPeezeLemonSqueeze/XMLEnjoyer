@@ -42,62 +42,64 @@
     <q-separator dark /> -->
     <div
       style="
-        position: absolute;
-        left: 10%;
-        font-family: 'Font Awesome 5 Brands';
-        top: 2%;
-        font-size: x-large;
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
+        margin-bottom: -35px;
+        height: 60px;
+        position: static;
+        app-region: drag;
+        user-select: none;
       "
-      class="text-white"
     >
-      X M L - E N J O Y E R
-    </div>
-    <div
-      style="
-        position: absolute;
-        left: 28%;
-        font-family: 'Font Awesome 5 Brands';
-        top: 3%;
-        font-size: medium;
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
-      "
-      class="text-white"
-    >
-      v 1.0
-    </div>
-    <div
-      v-if="AppStore.selectedOrg ? true : false"
-      style="
-        position: absolute;
-        left: 35%;
-        font-family: 'Font Awesome 5 Brands';
-        top: 2%;
-        font-size: x-large;
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
-      "
-      class="text-white"
-    >
-      <q-icon name="img:salesforce.svg" size="1.8em" /> :
-      {{ AppStore.selectedOrg }}
-    </div>
-    <div
-      v-if="!AppStore.selectedOrg ? true : false"
-      style="
-        position: absolute;
-        left: 35%;
-        font-family: 'Font Awesome 5 Brands';
-        top: 2%;
-        font-size: x-large;
-        -webkit-app-region: drag;
-        -webkit-user-select: none;
-      "
-      class="text-orange"
-    >
-      <q-icon name="img:salesforce.svg" size="1.8em" /> : N O - O R G
+      <div
+        style="
+          position: absolute;
+          left: 10%;
+          font-family: 'Font Awesome 5 Brands';
+          top: 2%;
+          font-size: x-large;
+        "
+        class="text-white"
+      >
+        X M L - E N J O Y E R
+      </div>
+      <div
+        style="
+          position: absolute;
+          left: 28%;
+          font-family: 'Font Awesome 5 Brands';
+          top: 3%;
+          font-size: medium;
+        "
+        class="text-white"
+      >
+        v 1.0
+      </div>
+      <div
+        v-if="AppStore.selectedOrg ? true : false"
+        style="
+          position: absolute;
+          left: 35%;
+          font-family: 'Font Awesome 5 Brands';
+          top: 2%;
+          font-size: x-large;
+        "
+        class="text-white"
+      >
+        <q-icon name="img:salesforce.svg" size="1.8em" /> :
+        {{ AppStore.selectedOrg }}
+      </div>
+      <div
+        v-if="!AppStore.selectedOrg ? true : false"
+        style="
+          position: absolute;
+          left: 35%;
+          font-family: 'Font Awesome 5 Brands';
+          top: 2%;
+          font-size: x-large;
+        "
+        class="text-orange"
+      >
+        <q-icon name="img:salesforce.svg" size="1.8em" /> : N O - O R G
+      </div>
     </div>
     <q-scroll-area
       horizontal
@@ -110,8 +112,8 @@
           class="text-white"
           :style="
             isDragActive
-              ? 'background: #3988D7;text-align: center;display: flex;border-width: 3px;border-style: dashed;margin-left: 0.5%;position: sticky;min-width: 350px;border-radius: 10px;max-width: 350px;max-height: 658px;min-height: 658px;top: 1.9%;flex-flow: column;align-items: center;justify-content: center;'
-              : 'background: transparent; text-align: center; display: flex; border-width: 3px; border-style: dashed; margin-left: 0.5%; position: sticky; min-width: 350px; border-radius: 10px; max-width: 350px; max-height: 658px; min-height: 658px; top: 1.9%; flex-flow: column; align-items: center; justify-content: center;'
+              ? 'background: #3988D7;text-align: center;display: flex;border-width: 3px;border-style: dashed;margin-left: 0.5%;position: sticky;min-width: 350px;border-radius: 10px;max-width: 350px;max-height: 658px;min-height: 658px;top: 1.9%;flex-flow: column;align-items: center;justify-content: center; user-select: none;'
+              : 'background: transparent; text-align: center; display: flex; border-width: 3px; border-style: dashed; margin-left: 0.5%; position: sticky; min-width: 350px; border-radius: 10px; max-width: 350px; max-height: 658px; min-height: 658px; top: 1.9%; flex-flow: column; align-items: center; justify-content: center; user-select: none;'
           "
         >
           <q-card-section>

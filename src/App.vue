@@ -88,16 +88,7 @@ export default defineComponent({
       jsonTestStore,
     };
   },
-  computed: {
-    autoCopyJsonTest: {
-      get() {
-        return this.jsonTestStore.autoCopyJsonOnCreate;
-      },
-      set(data) {
-        this.jsonTestStore.autoCopyJsonOnCreate = data;
-      },
-    },
-  },
+  computed: {},
   async mounted() {
     this.xmlStore.$q = useQuasar();
     this.xmlStore.Notify = Notify;
@@ -168,13 +159,6 @@ export default defineComponent({
       window.myAPI.quitApp();
     },
     */
-
-    updateAutoCopyJsonOnCreate() {
-      localStorage.setItem(
-        "AUTO_COPY_JSON_ON_CREATE",
-        this.jsonTestStore.autoCopyJsonOnCreate
-      );
-    },
   },
 });
 </script>
