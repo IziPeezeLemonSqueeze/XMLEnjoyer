@@ -171,7 +171,7 @@
       style="position: fixed; vertical-align: middle; bottom: 10px; left: 10px"
     >
       <q-badge outline align="middle" color="green">
-        Versione attuale: 1.0.1
+        Versione attuale: 1.0.2
       </q-badge>
     </div>
   </div>

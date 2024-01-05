@@ -144,17 +144,24 @@
             <q-list
               bordered
               padding
-              style="min-width: 350px; border-radius: 10px; max-width: 350px"
+              style="
+                min-width: 350px;
+                border-radius: 10px;
+                max-width: 350px;
+                background-color: #3988d7;
+                text-shadow: -1px -1px 0 #0c1e2f, 1px -1px 0 #0c1e2f,
+                  -1px 1px 0 #0c1e2f, 1px 1px 0 #0c1e2f;
+              "
               :class="
                 item.hover
                   ? item.parsed['Package']['@_xmlns']
                     ? item.parsed['Package']['@_xmlns'].includes('sforce')
-                      ? 'bg-blue-4 q-pa-sm q-ma-sm shadow-20 card-hover '
+                      ? 'q-pa-sm text-white q-ma-sm shadow-20 card-hover '
                       : 'bg-grey-5 q-pa-sm q-ma-sm card-hover shadow-20'
                     : 'bg-grey-5 q-pa-sm q-ma-sm card-hover shadow-20'
                   : item.parsed['Package']['@_xmlns']
                   ? item.parsed['Package']['@_xmlns'].includes('sforce')
-                    ? 'bg-blue-4 q-pa-sm q-ma-sm shadow-20'
+                    ? 'q-pa-sm text-white q-ma-sm shadow-20'
                     : 'bg-grey-5 q-pa-sm q-ma-sm shadow-20'
                   : 'bg-grey-5 q-pa-sm q-ma-sm shadow-20'
               "
@@ -568,11 +575,11 @@ export default {
     this._keyListener = async function (e) {
       if (e.key === "v" && (e.ctrlKey || e.metaKey)) {
         //e.preventDefault(); // present "Save Page" from getting triggered.
-
         this.text = await window.myAPI.getExternalClipboard();
         this.XMLViewerStore.SET_FILE(this.text);
         console.log("CONTROL V", this.text);
         this.text = null;
+        this.copy("");
       } else if (e.key === "c" && (e.ctrlKey || e.metaKey)) {
         e.preventDefault(); // present "Save Page" from getting triggered.
         this.text = null;
