@@ -183,6 +183,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       "TimeSheetTemplate",
       "WaveRecipe",
       "WorkSkillRouting",
+      "ValidationRule",
     ],
 
     dialogMerge: false,

@@ -6,10 +6,10 @@ const fs = require('fs');
 import { exec, execSync } from "child_process";
 
 
-import installExtension, {
+/* import installExtension, {
   VUEJS_DEVTOOLS
-} from "electron-devtools-installer";
-var { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser");
+} from "electron-devtools-installer"; */
+/* var { XMLParser, XMLBuilder, XMLValidator } = require("fast-xml-parser"); */
 // needed in case process is undefined under Linux
 const platform = process.platform || os.platform();
 try

@@ -1,6 +1,6 @@
 {
   "name": "xmlenjoyer",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Salesforce package xml tools ",
   "productName": "XmlEnjoyer",
   "author": "Stefano Pastore @ NTTDATA",
@@ -23,21 +23,21 @@
     "vue-draggable-next": "^2.1.1",
     "vue-router": "^4.2.5",
     "vue3-dropzone": "^2.2.1",
-    "vue3-xml-viewer": "^0.0.12"
+    "vue3-xml-viewer": "^0.0.14",
+    "xmlenjoyer": "file:"
   },
   "devDependencies": {
     "@quasar/app-vite": "^1.6.2",
     "@quasar/quasar-app-extension-dotenv": "^1.1.0",
     "@vue/devtools": "^6.5.1",
     "autoprefixer": "^10.4.2",
-    "electron": "^28.1.0",
-    "electron-builder": "^24.6.4",
-    "electron-devtools-installer": "^3.2.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.1.8",
     "electron-packager": "^17.1.2"
   },
   "engines": {
-    "node": "^18 || ^16 || ^14.19",
-    "npm": ">= 6.13.4",
+    "node": "^20 || ^18 || ^16 || ^14.19",
+    "npm": ">= ^10",
     "yarn": ">= 1.21.1"
   }
 }
