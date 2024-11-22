@@ -145,7 +145,7 @@
       <q-badge outline
         align="middle"
         color="green">
-        Versione attuale: 1.0.3
+        Versione attuale: 1.0.4
       </q-badge>
     </div>
   </div>
