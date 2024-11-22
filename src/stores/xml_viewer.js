@@ -406,7 +406,8 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
 
     ADD_TYPE_FROM_ONMODIFY()
     {
-      this.nodeOnModify.members.push({ "#text": "" });
+
+      this.nodeOnModify.members.unshift({ "#text": "" });
     },
 
     SORT_TYPES_FROM_ONMODIFY()
