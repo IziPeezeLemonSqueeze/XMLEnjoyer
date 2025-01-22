@@ -1,6 +1,6 @@
 {
   "name": "xmlenjoyer",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Salesforce package xml tools ",
   "productName": "XmlEnjoyer",
   "author": "Stefano Pastore @ NTTDATA",
@@ -14,7 +14,7 @@
     "@quasar/extras": "^1.16.8",
     "@vueuse/core": "^10.6.0",
     "@vueuse/electron": "^10.6.0",
-    "axios": "^0.21.1",
+    "axios": "^1.7.9",
     "electron-devtools-installer": "^3.2.0",
     "fast-xml-parser": "^4.0.9",
     "pinia": "2.1.7",
@@ -36,7 +36,7 @@
     "electron-packager": "^17.1.2"
   },
   "engines": {
-    "node": "^20 || ^18 || ^16 || ^14.19",
+    "node": "^22 || ^20 || ^18 || ^16 || ^14.19",
     "npm": ">= ^10",
     "yarn": ">= 1.21.1"
   }

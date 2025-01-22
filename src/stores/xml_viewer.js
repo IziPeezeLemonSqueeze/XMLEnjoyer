@@ -184,6 +184,9 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       "WaveRecipe",
       "WorkSkillRouting",
       "ValidationRule",
+      "WorkflowFieldUpdate",
+      "WorkflowAlert",
+      "StaticResource",
     ],
 
     dialogMerge: false,
