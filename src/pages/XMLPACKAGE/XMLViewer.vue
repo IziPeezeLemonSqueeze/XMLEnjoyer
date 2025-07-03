@@ -71,7 +71,7 @@
         "
         class="text-white"
       >
-        v 1.0
+        v 1.0.6
       </div>
       <div
         v-if="AppStore.selectedOrg ? true : false"

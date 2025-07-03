@@ -187,6 +187,117 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       "WorkflowFieldUpdate",
       "WorkflowAlert",
       "StaticResource",
+      "AccountSettings",
+      "ActivitiesSettings",
+      "AddressSettings",
+      "AnalyticsSettings",
+      "ApexSettings",
+      "AssistantSettings",
+      "AutoResponseRule",
+      "BlacklistedConsumer",
+      "BotSettings",
+      "BrandingSet",
+      "BusinessHoursSettings",
+      "CallCenterRoutingMap",
+      "CampaignSettings",
+      "CaseSettings",
+      "ChatterAnswersSettings",
+      "ChatterEmailsMDSettings",
+      "ChatterSettings",
+      "CodeSettings",
+      "CompanySettings",
+      "ConnectedAppSettings",
+      "ContractSettings",
+      "ConversationChannelDefinition",
+      "ConversationVendorFieldDef",
+      "CrmAnalyticsSettings",
+      "CurrencySettings",
+      "CustomAddressFieldSettings",
+      "CustomIndex",
+      "CustomValue",
+      "DataWeaveResource",
+      "DefaultShortcut",
+      "DevHubSettings",
+      "DigitalExperience",
+      "DigitalExperienceBundle",
+      "DigitalExperienceConfig",
+      "Document",
+      "DocumentCategory",
+      "DocumentCategoryDocumentType",
+      "DocumentType",
+      "EinsteinAgentConfig",
+      "EinsteinAssistantConfig",
+      "EinsteinFeatureConfig",
+      "EinsteinGPTConfig",
+      "EmailAdministrationSettings",
+      "EmailDeliverabilitySettings",
+      "EmailIntegrationSettings",
+      "EmailServicesFunction",
+      "EmbeddedServiceBranding",
+      "EmbeddedServiceConfig",
+      "EmbeddedServiceFlowConfig",
+      "EmbeddedServiceLiveAgent",
+      "EmbeddedServiceMenuSettings",
+      "EntitlementSettings",
+      "EscalationRule",
+      "EscalationRules",
+      "EssentialsSettings",
+      "ExperienceBundle",
+      "ExperiencePropertyTypeBundle",
+      "ExternalString",
+      "FieldServiceSettings",
+      "FinancialServicesSettings",
+      "ForecastingSettings",
+      "GoogleAppsSettings",
+      "HealthCloudSettings",
+      "HighVelocitySalesSettings",
+      "IdeasSettings",
+      "IndustrySettings",
+      "KnowledgeSettings",
+      "LeadConvertSettings",
+      "LightningOnboardingConfig",
+      "LiveAgentSettings",
+      "LiveChatSettings",
+      "MacroSettings",
+      "ManagedContentSpace",
+      "ManagedContentType",
+      "MarketingActionSettings",
+      "MessagingChannel",
+      "MobileApplicationDetail",
+      "MobileSettings",
+      "MuleSoftConnector",
+      "OpportunitySettings",
+      "OrderSettings",
+      "OrgWideEmailAddress",
+      "PartyDataModelSettings",
+      "PersonAccount",
+      "PlatformEventSubscriberConfig",
+      "PredictionBuilderSettings",
+      "PrivacySettings",
+      "ProductSettings",
+      "QuoteSettings",
+      "Report",
+      "ReportFolder",
+      "SearchSettings",
+      "SecuritySettings",
+      "ServiceCloudVoiceSettings",
+      "ServiceSetupAssistantSettings",
+      "SharingSettings",
+      "SocialCustomerServiceSettings",
+      "SurveySettings",
+      "TableauHostMapping",
+      "TerritorySettings",
+      "TrailheadSettings",
+      "UserManagementSettings",
+      "VoiceSettings",
+      "WarrantyLifecycleMgmtSettings",
+      "WaveAsset",
+      "WorkDotComSettings",
+      "WorkflowKnowledgePublish",
+      "WorkflowOutboundMessage",
+      "WorkflowRule",
+      "WorkflowSend",
+      "WorkflowTask",
     ],
 
     dialogMerge: false,
@@ -207,7 +318,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     metadataRetrieved: [],
 
     notifyDismissDownloadMDT: null,
-
   }),
   getters: {
     GET_TEXT_FILE: (state) => state.textFile,
@@ -221,18 +331,13 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
     GET_DIALOG_TEST_JSON_HIDE: (state) => state.dialogJsonTest,
 
     GET_NOTIFY_DISMISS_DOWNLOAD_MDT: (state) => state.notifyDismissDownloadMDT,
-
-
   },
   actions: {
-    SET_HOVER(data)
-    {
+    SET_HOVER(data) {
       console.log("xml_hover", data);
 
-      let el = this.parsedFile.filter((elem) =>
-      {
-        if (elem.uuid == data.i)
-        {
+      let el = this.parsedFile.filter((elem) => {
+        if (elem.uuid == data.i) {
           elem.hover = data.b;
           return elem;
         }
@@ -241,64 +346,77 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       console.log(el);
     },
 
-    REMOVE_NODE(index, idxEl)
-    {
+    REMOVE_NODE(index, idxEl) {
       this.parsedFile[index].parsed["Package"]["types"].splice(idxEl, 1);
     },
 
-    SET_TEXT_FILE(data)
-    {
+    SET_TEXT_FILE(data) {
       this.textFile = data.toString();
     },
 
-    GENERATE_NEW_EMPTY_XML()
-    {
-      this.parsedFile.push({ "uuid": crypto.randomUUID(), "closing": false, "checked": false, "openInfo": false, "hover": false, "index": this.parsedFile.length + 1, "nameFile": crypto.randomUUID(), "pathFile": null, "text": null, "parsed": { "?xml": { "@_version": "1.0", "@_encoding": "UTF-8", "@_standalone": "yes" }, "Package": { "types": [{ "members": [], "name": { "#text": "CHANGE_ME" } }], "version": { "#text": this.appStore.apiVersion }, "@_xmlns": "http://soap.sforce.com/2006/04/metadata" }, "#comment": { "#text": "" } } })
-
+    GENERATE_NEW_EMPTY_XML() {
+      this.parsedFile.push({
+        uuid: crypto.randomUUID(),
+        closing: false,
+        checked: false,
+        openInfo: false,
+        hover: false,
+        index: this.parsedFile.length + 1,
+        nameFile: crypto.randomUUID(),
+        pathFile: null,
+        text: null,
+        parsed: {
+          "?xml": {
+            "@_version": "1.0",
+            "@_encoding": "UTF-8",
+            "@_standalone": "yes",
+          },
+          Package: {
+            types: [{ members: [], name: { "#text": "CHANGE_ME" } }],
+            version: { "#text": this.appStore.apiVersion },
+            "@_xmlns": "http://soap.sforce.com/2006/04/metadata",
+          },
+          "#comment": { "#text": "" },
+        },
+      });
     },
 
-    SET_FILE(data)
-    {
-      console.log('DATA FROM FILE', data);
+    SET_FILE(data) {
+      console.log("DATA FROM FILE", data);
       const fr = new FileReader();
 
-      if (data.includes('<?xml'))
-      {
+      if (data.includes("<?xml")) {
         this._CREATE_XML({
-          data:
-          {
-            name: 'FROM_CLIPBOARD' + crypto.randomUUID(),
-            path: null
+          data: {
+            name: "FROM_CLIPBOARD" + crypto.randomUUID(),
+            path: null,
           },
-          end: { target: { result: data } }
+          end: { target: { result: data } },
         });
-      } else if (data[0].type === 'text/xml')
-      {
+      } else if (data[0].type === "text/xml") {
         fr.readAsText(data[0]);
-        console.log('FILE READ');
-        fr.onload = async () =>
-        {
-          console.log('END', fr.result);
-          this._CREATE_XML({ data: data, end: { target: { result: fr.result } } });
+        console.log("FILE READ");
+        fr.onload = async () => {
+          console.log("END", fr.result);
+          this._CREATE_XML({
+            data: data,
+            end: { target: { result: fr.result } },
+          });
         };
-
       }
     },
 
-    _CREATE_XML(data, fromClip)
-    {
-      console.log('CREATE XML', data);
+    _CREATE_XML(data, fromClip) {
+      console.log("CREATE XML", data);
       let parser = new XMLParser({
         alwaysCreateTextNode: true,
         ignoreAttributes: false,
         ignoreDeclaration: false,
         parseAttributeValue: false,
         commentPropName: "#comment",
-        isArray: (name, jpath, isLeafNode, isAttribute) =>
-        {
+        isArray: (name, jpath, isLeafNode, isAttribute) => {
           //console.log(name, jpath, isLeafNode, isAttribute)
-          switch (name)
-          {
+          switch (name) {
             case "members":
               return true;
             case "types":
@@ -323,18 +441,17 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       };
 
       // CHECK TYPES COMMENTED THEN DELETE
-      if (pf.parsed['Package']['#comment'])
-      {
-        delete pf.parsed['Package']['#comment'];
+      if (pf.parsed["Package"]["#comment"]) {
+        delete pf.parsed["Package"]["#comment"];
       }
 
       // pf.nodes = this.CREATE_NODES(parser.parse(end.target.result));
-      if (!pf.text.includes('<Package') ||
-        !pf.text.includes('soap.sforce.com'))
-      {
+      if (
+        !pf.text.includes("<Package") ||
+        !pf.text.includes("soap.sforce.com")
+      ) {
         this.Notify.create({
-          message:
-            "XML NON VALIDO!",
+          message: "XML NON VALIDO!",
           color: "red",
           timeout: 3000,
         });
@@ -350,36 +467,34 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       });
     },
 
-    DELETE_XML(data)
-    {
-      this.parsedFile.forEach((el, index) =>
-      {
-        if (el.uuid === data)
-        {
+    DELETE_XML(data) {
+      this.parsedFile.forEach((el, index) => {
+        if (el.uuid === data) {
           this.parsedFile.splice(index, 1);
         }
       });
 
-      this.historyStore.history = this.historyStore.history.filter((xml) => xml.uuid != data)
+      this.historyStore.history = this.historyStore.history.filter(
+        (xml) => xml.uuid != data
+      );
       this.selectedXML = this.selectedXML.filter((xml) => xml != data);
     },
 
-    GET_CHECKED_XML()
-    {
-      this.parsedFile.forEach((el, ind) =>
-      {
-        if (el.checked)
-        {
-          !this.selectedXML.includes(el.uuid) ? this.selectedXML.push(el.uuid) : null;
-        } else
-        {
-          this.selectedXML.includes(el.uuid) ? this.selectedXML.splice(this.selectedXML.indexOf(el.uuid), 1) : null;
+    GET_CHECKED_XML() {
+      this.parsedFile.forEach((el, ind) => {
+        if (el.checked) {
+          !this.selectedXML.includes(el.uuid)
+            ? this.selectedXML.push(el.uuid)
+            : null;
+        } else {
+          this.selectedXML.includes(el.uuid)
+            ? this.selectedXML.splice(this.selectedXML.indexOf(el.uuid), 1)
+            : null;
         }
       });
     },
 
-    ADD_TYPE_ON_XML(data)
-    {
+    ADD_TYPE_ON_XML(data) {
       this.parsedFile[data.index].parsed["Package"]["types"].unshift({
         members: [],
         name: { "#text": data.name },
@@ -393,8 +508,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       this.ADD_COMMENT_LASTMODIFIED_ON_XML(data.index);
     },
 
-    SET_TYPE_ON_MODIFY(data)
-    {
+    SET_TYPE_ON_MODIFY(data) {
       console.log(data);
       this.nodeOnModify.indexSelected = data.parsedFileIndex;
       this.nodeOnModify.indexNodeSelected = data.parsedFileNodeIndex;
@@ -402,46 +516,35 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       this.nodeOnModify.name = data.node.name;
     },
 
-    DELETE_TYPE_FROM_ONMODIFY(data)
-    {
+    DELETE_TYPE_FROM_ONMODIFY(data) {
       this.nodeOnModify.members.splice(data, 1);
     },
 
-    ADD_TYPE_FROM_ONMODIFY()
-    {
-
+    ADD_TYPE_FROM_ONMODIFY() {
       this.nodeOnModify.members.unshift({ "#text": "" });
     },
 
-    SORT_TYPES_FROM_ONMODIFY()
-    {
-      this.nodeOnModify.members.sort((a, b) =>
-      {
-        if (a["#text"] < b["#text"])
-        {
+    SORT_TYPES_FROM_ONMODIFY() {
+      this.nodeOnModify.members.sort((a, b) => {
+        if (a["#text"] < b["#text"]) {
           return -1;
         }
-        if (a["#text"] > b["#text"])
-        {
+        if (a["#text"] > b["#text"]) {
           return 1;
         }
         return 0;
       });
     },
 
-    SORT_TYPES_AND_MEMBERS(data)
-    {
+    SORT_TYPES_AND_MEMBERS(data) {
       this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].sort(
-        (a, b) =>
-        {
+        (a, b) => {
           let aa = a.name,
             bb = b.name;
-          if (aa["#text"] < bb["#text"])
-          {
+          if (aa["#text"] < bb["#text"]) {
             return -1;
           }
-          if (aa["#text"] > bb["#text"])
-          {
+          if (aa["#text"] > bb["#text"]) {
             return 1;
           }
           return 0;
@@ -449,18 +552,14 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       );
 
       this.parsedFile[data.indexParsedFile].parsed["Package"]["types"].forEach(
-        (n) =>
-        {
+        (n) => {
           let mem = n.members;
 
-          mem.sort((a, b) =>
-          {
-            if (a["#text"] < b["#text"])
-            {
+          mem.sort((a, b) => {
+            if (a["#text"] < b["#text"]) {
               return -1;
             }
-            if (a["#text"] > b["#text"])
-            {
+            if (a["#text"] > b["#text"]) {
               return 1;
             }
             return 0;
@@ -471,31 +570,27 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       this.ADD_COMMENT_LASTMODIFIED_ON_XML(data.indexParsedFile);
     },
 
-    SET_METADATA_RETRIEVED(data)
-    {
+    SET_METADATA_RETRIEVED(data) {
       this.metadataRetrieved = [];
       let ret = JSON.parse(data);
 
-      ret.result.forEach((mdt) =>
-      {
-
-        if (mdt.fullName.includes('%28'))
-        {
-          mdt.fullName = mdt.fullName.replace('%28', '(');
+      ret.result.forEach((mdt) => {
+        if (mdt.fullName.includes("%28")) {
+          mdt.fullName = mdt.fullName.replace("%28", "(");
         }
-        if (mdt.fullName.includes('%29'))
-        {
-          mdt.fullName = mdt.fullName.replace('%29', ')');
+        if (mdt.fullName.includes("%29")) {
+          mdt.fullName = mdt.fullName.replace("%29", ")");
         }
-        if (mdt.fullName.includes('%26'))
-        {
-          mdt.fullName = mdt.fullName.replace('%26', '&');
+        if (mdt.fullName.includes("%26")) {
+          mdt.fullName = mdt.fullName.replace("%26", "&");
         }
 
         //console.log(mdt.type, mdt.manageableState, mdt.namespacePrefix)
-        if (mdt.type == 'Layout' && mdt.manageableState == 'installed')
-        {
-          mdt.fullName = mdt.fullName.replace('-', '-' + mdt.namespacePrefix + '__');
+        if (mdt.type == "Layout" && mdt.manageableState == "installed") {
+          mdt.fullName = mdt.fullName.replace(
+            "-",
+            "-" + mdt.namespacePrefix + "__"
+          );
         }
 
         this.metadataRetrieved.push(mdt.fullName);
@@ -503,14 +598,16 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       this.metadataRetrieved.sort();
     },
 
-    ADD_COMMENT_LASTMODIFIED_ON_XML(data)
-    {
-      console.log(data, 'ADD LAST MODIFIED', this.appStore.nameOperator);
+    ADD_COMMENT_LASTMODIFIED_ON_XML(data) {
+      console.log(data, "ADD LAST MODIFIED", this.appStore.nameOperator);
       const nowDate = new Date();
-      this.parsedFile[data].parsed['#comment'] = {
-        '#text': this.appStore.nameOperator +
+      this.parsedFile[data].parsed["#comment"] = {
+        "#text":
+          this.appStore.nameOperator +
           " " +
-          (nowDate.getDate() < 10 ? '0' + nowDate.getDate() : nowDate.getDate()) +
+          (nowDate.getDate() < 10
+            ? "0" + nowDate.getDate()
+            : nowDate.getDate()) +
           "/" +
           (nowDate.getMonth() + 1 < 10
             ? "0" + (nowDate.getMonth() + 1)
@@ -520,8 +617,7 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
       };
     },
 
-    CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(data)
-    {
+    CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(data) {
       this.downloadingMDT = true;
       this.notifyDismissDownloadMDT = this.Notify.create({
         message: `Scarico Metadata dalla ORG ${data}`,
@@ -531,6 +627,6 @@ export const useXMLViewerStore = defineStore("xml_viewer", {
         textColor: "white",
         spinner: QSpinnerGrid,
       });
-    }
+    },
   },
 });

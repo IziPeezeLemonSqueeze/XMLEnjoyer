@@ -139,13 +139,14 @@
         label="CONTROLLA AGGIORNAMENTI"
         dense
         outline
-        color="primary" />
+        color="primary"
+        @click="openGithubPageForUpdateCheck" />
     </div>
     <div style="position: fixed; vertical-align: middle; bottom: 10px; left: 10px">
       <q-badge outline
         align="middle"
         color="green">
-        Versione attuale: 1.0.5
+        Versione attuale: 1.0.6
       </q-badge>
     </div>
   </div>
@@ -198,6 +199,13 @@ export default {
       this.appStore.appChoiced = true;
       this.appStore.appActive = value;
     },
+
+    openGithubPageForUpdateCheck()
+    {
+      window.open(
+        "https://github.com/IziPeezeLemonSqueeze/XMLEnjoyer/releases"
+      );
+    }
   },
 };
 </script>
