@@ -150,20 +150,23 @@ export default {
   methods: {
     async synchMetadata()
     {
-      this.AppStore.SET_PAIR_ORG();
-      this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(
-        this.AppStore.GET_SELECTED_ORG
-      );
+      if (this.XMLViewerStore.nodeOnModify.name[ "#text" ] != "CHANGE_ME")
+      {
+        this.AppStore.SET_PAIR_ORG();
+        this.XMLViewerStore.CREATE_NOTIFY_DOWNLOAD_FROM_ORG_MDT(
+          this.AppStore.GET_SELECTED_ORG
+        );
 
-      this.XMLViewerStore.SET_METADATA_RETRIEVED(
-        await window.myAPI.retrieveMetadata({
-          org: this.AppStore.GET_SELECTED_ORG,
-          mdtName: this.XMLViewerStore.nodeOnModify.name[ "#text" ],
-          api: localStorage.getItem("API_VERSION"),
-        })
-      );
-      this.XMLViewerStore.notifyDismissDownloadMDT();
-      this.XMLViewerStore.downloadingMDT = false;
+        this.XMLViewerStore.SET_METADATA_RETRIEVED(
+          await window.myAPI.retrieveMetadata({
+            org: this.AppStore.GET_SELECTED_ORG,
+            mdtName: this.XMLViewerStore.nodeOnModify.name[ "#text" ],
+            api: localStorage.getItem("API_VERSION"),
+          })
+        );
+        this.XMLViewerStore.notifyDismissDownloadMDT();
+        this.XMLViewerStore.downloadingMDT = false;
+      }
     },
 
     async updatedTypeName()
